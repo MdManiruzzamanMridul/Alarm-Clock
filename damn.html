@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Alarm Solutions™</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #1a1d20;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card {
+            border: 1px solid #444;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .digital-display {
+            background: #000;
+            color: #00ff41; /* Hacker Green */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 3rem;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #333;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* The glowing cursor effect */
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .active-segment {
+            border-bottom: 4px solid #0d6efd; /* Bootstrap Blue Underline */
+            color: #fff;
+        }
+
+        .btn-xl {
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            width: 100%;
+            border-radius: 0;
+            text-transform: uppercase;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: monospace;
+            z-index: 10;
+            border-radius: 10px;
+        }
+
+        #log-container {
+            height: 100px;
+            overflow-y: auto;
+            background: #111;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #aaa;
+            padding: 10px;
+            border-top: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                
+                <div class="card animate__animated" id="mainCard">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <span><i class="fa-solid fa-clock"></i> ENTERPRISE ALARM CLOCK v9.2</span>
+                        <span class="badge bg-danger">BETA</span>
+                    </div>
+
+                    <div class="card-body p-4">
+                        
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="fa-solid fa-circle-info me-2"></i>
+                            <div id="status-text">
+                                System Ready. Initializing Phase 1 (Hours)...
+                            </div>
+                        </div>
+
+                        <div class="digital-display">
+                            <div class="loading-overlay" id="loader">
+                                <div>
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <div class="mt-2">SYNCING...</div>
+                                </div>
+                            </div>
+                            
+                            <span id="seg-hh" class="active-segment">--</span> : 
+                            <span id="seg-mm">--</span> : 
+                            <span id="seg-ss">--</span> 
+                            <span id="seg-ap" style="font-size: 2rem;">--</span>
+                        </div>
+
+                        <div class="text-center mb-3 text-muted">
+                            BUFFER VALUE: <strong id="buffer-val" class="text-white fs-4">0</strong>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <button class="btn btn-outline-warning btn-xl" onclick="requestInteger()">
+                                    <i class="fa-solid fa-dice"></i> Request Integer
+                                </button>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-primary btn-xl" onclick="commitTransaction()">
+                                    <i class="fa-solid fa-check"></i> Commit
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="log-container">
+                        <div>> SYSTEM BOOT SEQUENCE INITIATED...</div>
+                        <div>> WAITING FOR USER INPUT...</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // --- LOGIC ---
+        
+        let phase = 0; // 0=HH, 1=MM, 2=SS, 3=AM/PM
+        let buffer = 0;
+        let finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
+        let isProcessing = false;
+
+        const ui = {
+            hh: document.getElementById('seg-hh'),
+            mm: document.getElementById('seg-mm'),
+            ss: document.getElementById('seg-ss'),
+            ap: document.getElementById('seg-ap'),
+            buffer: document.getElementById('buffer-val'),
+            status: document.getElementById('status-text'),
+            loader: document.getElementById('loader'),
+            log: document.getElementById('log-container'),
+            card: document.getElementById('mainCard')
+        };
+
+        function addLog(msg) {
+            const div = document.createElement('div');
+            div.innerText = `> ${msg}`;
+            ui.log.prepend(div); // Add to top
+        }
+
+        // Simulates a slow server request
+        function requestInteger() {
+            if(isProcessing) return;
+            isProcessing = true;
+            ui.loader.style.display = 'flex'; // Show spinner
+
+            // Random delay between 500ms and 1500ms
+            const delay = Math.floor(Math.random() * 1000) + 500;
+
+            setTimeout(() => {
+                // The RNG Logic
+                let roll = Math.floor(Math.random() * 31) - 15; // -15 to +15
+                if(roll === 0) roll = 1; // No zeros allowed
+
+                buffer += roll;
+                
+                ui.buffer.innerText = buffer;
+                ui.loader.style.display = 'none';
+                addLog(`Server returned: ${roll}. Buffer is now: ${buffer}`);
+                isProcessing = false;
+            }, delay);
+        }
+
+        function commitTransaction() {
+            if(isProcessing) return;
+
+            let isValid = false;
+            let errorText = "";
+
+            // Validation Logic
+            if(phase === 0) { // Hours
+                if(buffer >= 1 && buffer <= 12) {
+                    finalValues.hh = buffer.toString().padStart(2, '0');
+                    isValid = true;
+                } else errorText = "Hours must be between 1 and 12.";
+            } 
+            else if(phase === 1) { // Min
+                if(buffer >= 0 && buffer <= 59) {
+                    finalValues.mm = buffer.toString().padStart(2, '0');
+                    isValid = true;
+                } else errorText = "Minutes must be between 0 and 59.";
+            }
+            else if(phase === 2) { // Sec
+                if(buffer >= 0 && buffer <= 59) {
+                    finalValues.ss = buffer.toString().padStart(2, '0');
+                    isValid = true;
+                } else errorText = "Seconds must be between 0 and 59.";
+            }
+            else if(phase === 3) { // AM/PM
+                if(buffer === 0 || buffer === 1) {
+                    finalValues.ap = (buffer === 0) ? "AM" : "PM";
+                    isValid = true;
+                } else errorText = "Meridiem Identity unknown. 0=AM, 1=PM.";
+            }
+
+            if(isValid) {
+                // SUCCESS
+                addLog(`Phase ${phase} Committed Successfully.`);
+                phase++;
+                buffer = 0;
+                ui.buffer.innerText = "0";
+                updateDisplay();
+
+                if(phase > 3) {
+                    finishGame();
+                } else {
+                    // Update Status text
+                    const titles = ["Hours", "Minutes", "Seconds", "Meridiem"];
+                    ui.status.innerText = `Phase ${phase + 1}: Calibrating ${titles[phase]}...`;
+                }
+
+            } else {
+                // FAILURE - SweetAlert Popup
+                Swal.fire({
+                    icon: 'error',
+                    title: 'CRITICAL FAILURE',
+                    text: `Validation Error: ${errorText} \n\nSystem integrity compromised. Resetting pipeline.`,
+                    background: '#222',
+                    color: '#fff'
+                }).then(() => {
+                    fullReset();
+                });
+            }
+        }
+
+        function updateDisplay() {
+            // Update the display based on stored values
+            ui.hh.innerText = finalValues.hh;
+            ui.mm.innerText = finalValues.mm;
+            ui.ss.innerText = finalValues.ss;
+            ui.ap.innerText = finalValues.ap;
+
+            // Manage Highlight Classes
+            ui.hh.className = phase === 0 ? "active-segment" : "";
+            ui.mm.className = phase === 1 ? "active-segment" : "";
+            ui.ss.className = phase === 2 ? "active-segment" : "";
+            ui.ap.className = phase === 3 ? "active-segment" : "";
+        }
+
+        function fullReset() {
+            // Shake animation
+            ui.card.classList.add('animate__shakeX');
+            setTimeout(() => ui.card.classList.remove('animate__shakeX'), 1000);
+
+            phase = 0;
+            buffer = 0;
+            finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
+            ui.buffer.innerText = "0";
+            ui.status.innerText = "System Ready. Initializing Phase 1 (Hours)...";
+            addLog("!!! SYSTEM RESET TRIGGERED !!!");
+            updateDisplay();
+        }
+
+        function finishGame() {
+            Swal.fire({
+                icon: 'success',
+                title: 'ALARM SYNCHRONIZED',
+                text: `Alarm set for ${finalValues.hh}:${finalValues.mm}:${finalValues.ss} ${finalValues.ap}`,
+                background: '#222',
+                color: '#fff',
+                confirmButtonText: 'Suffer Again'
+            }).then(() => {
+                fullReset();
+            });
+        }
+
+        // Init
+        updateDisplay();
+    </script>
+</body>
+</html>

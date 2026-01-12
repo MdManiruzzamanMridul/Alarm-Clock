@@ -3,253 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Accumulator | Worst UI 2026</title>
+    <title>Accumulator Clock v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* WARNING: THIS CSS IS DESIGNED TO BE UGLY ON PURPOSE */
         body {
-            background-color: #d4d0c8; /* Windows 95 Gray */
-            font-family: 'Times New Roman', Times, serif;
+            background-color: #2c3e50;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            cursor: progress; /* Always looks like it's loading */
+            user-select: none;
         }
 
-        .bureaucracy-card {
-            background-color: #ffffff;
-            border: 4px ridge #808080;
-            width: 500px;
-            padding: 20px;
-            box-shadow: 10px 10px 0px #000000;
-        }
-
-        h1 {
-            background-color: #000080;
-            color: white;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
-            font-size: 18px;
-            padding: 5px;
-            margin-top: 0;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .status-bar {
-            background-color: #ffff00;
-            color: red;
-            border: 1px dashed black;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .display-box {
+        .device-casing {
             background-color: #000;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
-            font-size: 40px;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border: 4px solid #555;
+            width: 600px;
+        }
+
+        .brand {
+            color: #555;
             text-align: center;
+            font-size: 12px;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            font-family: sans-serif;
+            text-transform: uppercase;
+        }
+
+        .screen {
+            background-color: #0d1a0d;
+            border: 4px inset #333;
+            border-radius: 5px;
             padding: 20px;
-            margin: 20px 0;
-            border: 5px inset #d4d0c8;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
         }
 
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        /* The Digital Clock Look */
+        .clock-display {
+            font-family: 'Orbitron', monospace;
+            font-size: 50px;
+            color: #0f0; /* Retro Green */
+            text-shadow: 0 0 10px #0f0;
+            letter-spacing: 3px;
         }
 
-        button {
-            padding: 15px;
-            font-size: 16px;
-            background-color: #c0c0c0;
-            border: 3px outset #fff;
-            cursor: help; /* Confusing cursor */
-        }
-
-        button:active {
-            border: 3px inset #fff;
-        }
-
-        .rng-btn {
-            font-weight: bold;
-        }
-
-        .submit-btn {
-            color: blue;
+        .active-segment {
+            color: #fff; /* Highlight the part being edited */
+            text-shadow: 0 0 15px #fff;
             text-decoration: underline;
         }
 
-        .log-area {
-            margin-top: 15px;
-            font-size: 10px;
-            color: #666;
-            height: 60px;
-            overflow-y: scroll;
-            border: 1px solid #999;
-            padding: 5px;
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
-        /* The annoying floating element */
-        #assistant {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 12px;
-            background: white;
-            border: 1px solid black;
-            padding: 5px;
+        button {
+            padding: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-transform: uppercase;
         }
+
+        .btn-rng {
+            background-color: #e74c3c;
+            color: white;
+            box-shadow: 0 5px 0 #c0392b;
+        }
+        .btn-rng:active { box-shadow: 0 2px 0 #c0392b; transform: translateY(3px); }
+
+        .btn-submit {
+            background-color: #f1c40f;
+            color: black;
+            box-shadow: 0 5px 0 #f39c12;
+        }
+        .btn-submit:active { box-shadow: 0 2px 0 #f39c12; transform: translateY(3px); }
+
+        .instruction-panel {
+            background-color: #333;
+            color: #fff;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            font-family: monospace;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .phase-indicator {
+            color: #f1c40f;
+            font-weight: bold;
+        }
+
+        #log {
+            font-size: 10px;
+            color: #777;
+            margin-top: 5px;
+            height: 20px;
+            overflow: hidden;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="bureaucracy-card">
-        <h1>ALARM REQUISITION FORM v.4.0</h1>
+    <div class="device-casing">
+        <div class="brand">Suffering Systems Inc.</div>
         
-        <div class="status-bar" id="instruction-text">
-            PHASE 1: Calibrating HOUR Hand...
-        </div>
-
-        <div class="display-box" id="current-value">
-            0
+        <div class="screen">
+            <div class="clock-display" id="clock">
+                <span id="seg-hh" class="active-segment">00</span>:<span id="seg-mm">--</span>:<span id="seg-ss">--</span> <span id="seg-ap">--</span>
+            </div>
         </div>
 
         <div class="controls">
-            <button class="rng-btn" onclick="applyFluctuation()">
-                [ CLICK TO GENERATE INTEGER FLUCTUATION ]
+            <button class="btn-rng" onclick="rollDice()">
+                Random (+/-)
             </button>
-
-            <button class="submit-btn" onclick="submitValue()">
-                Submit Value & Request Next Phase
-            </button>
-            
-            <button onclick="resetForm()" style="font-size: 9px; color: red;">
-                Cancel & Destroy All Data
+            <button class="btn-submit" onclick="confirmSelection()">
+                Set & Next >
             </button>
         </div>
 
-        <div class="log-area" id="log">
-            SYSTEM LOG STARTED...<br>
-            Waiting for input...
+        <div class="instruction-panel">
+            <div id="status-text">CURRENT TARGET: <span class="phase-indicator">HOURS (1-12)</span></div>
+            <div id="log">Waiting for input...</div>
         </div>
-    </div>
-
-    <div id="assistant">
-        Tip: Don't exceed standard time limits.
     </div>
 
     <script>
-        // State Variables
-        let phase = 0; // 0=Hour, 1=Minute, 2=Second
-        let accumulator = 0; // The current running total
-        let finalTime = { h: 0, m: 0, s: 0 };
+        // Game State
+        let phase = 0; // 0=Hour, 1=Min, 2=Sec, 3=AM/PM
+        let accumulator = 0; // The gambling number
         
+        // Stored Values
+        let finalValues = {
+            hh: "--",
+            mm: "--",
+            ss: "--",
+            ap: "--"
+        };
+
         // DOM Elements
-        const display = document.getElementById('current-value');
-        const instruction = document.getElementById('instruction-text');
-        const log = document.getElementById('log');
+        const elHH = document.getElementById('seg-hh');
+        const elMM = document.getElementById('seg-mm');
+        const elSS = document.getElementById('seg-ss');
+        const elAP = document.getElementById('seg-ap');
+        const elStatus = document.getElementById('status-text');
+        const elLog = document.getElementById('log');
 
-        // Sounds (Optional, but adds to the pain if you had audio files)
-        
         function updateDisplay() {
-            display.innerText = accumulator;
-        }
-
-        function addToLog(msg) {
-            log.innerHTML += `> ${msg}<br>`;
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function applyFluctuation() {
-            // Generate random number between -15 and +15
-            // But exclude 0 because that's annoying in a boring way
-            let variance = Math.floor(Math.random() * 31) - 15; 
-            if (variance === 0) variance = 1; 
-
-            accumulator += variance;
+            // Update the text of the ACTIVE segment only
+            // The others remain as they were stored
             
-            // Visual feedback
-            addToLog(`Applying variance: ${variance > 0 ? '+' : ''}${variance}`);
+            // Render logic
+            elHH.innerText = (phase === 0) ? formatNum(accumulator) : finalValues.hh;
+            elMM.innerText = (phase === 1) ? formatNum(accumulator) : finalValues.mm;
+            elSS.innerText = (phase === 2) ? formatNum(accumulator) : finalValues.ss;
+            
+            // AM/PM Render logic
+            if (phase === 3) {
+                if (accumulator === 0) elAP.innerText = "AM";
+                else if (accumulator === 1) elAP.innerText = "PM";
+                else elAP.innerText = "? " + accumulator; // Show the confused number
+            } else {
+                elAP.innerText = finalValues.ap;
+            }
+
+            // Highlight logic
+            elHH.className = phase === 0 ? "active-segment" : "";
+            elMM.className = phase === 1 ? "active-segment" : "";
+            elSS.className = phase === 2 ? "active-segment" : "";
+            elAP.className = phase === 3 ? "active-segment" : "";
+        }
+
+        function formatNum(num) {
+            // Adds leading zero, handles negative visualization
+            if (num < 0) return num; // Show "-5"
+            return num.toString().padStart(2, '0');
+        }
+
+        function rollDice() {
+            let roll = Math.floor(Math.random() * 31) - 10;
+
+            if (roll === 0) roll = 1;
+
+            if(accumulator + roll >= -99 && accumulator + roll <= 99)
+            accumulator += roll;
+            else {
+                accumulator = 0;
+                elLog.innerText = "Overflow! Accumulator reset to 0.";
+                updateDisplay();
+            }
+            
+            elLog.innerText = `Rolled: ${roll > 0 ? '+' : ''}${roll} | Total: ${accumulator}`;
             updateDisplay();
         }
 
-        function submitValue() {
-            // Check based on phase
+        function confirmSelection() {
             let isValid = false;
-            let limit = 0;
-            let type = "";
+            let errorMsg = "";
 
-            if (phase === 0) { // Hours
-                type = "HOUR";
-                limit = 23;
-                if (accumulator >= 0 && accumulator <= 23) isValid = true;
-            } else { // Minutes and Seconds
-                type = (phase === 1) ? "MINUTE" : "SECOND";
-                limit = 59;
-                if (accumulator >= 0 && accumulator <= 59) isValid = true;
+            if (phase === 0) { 
+                // HOUR CHECK: Must be 1 to 12
+                if (accumulator >= 1 && accumulator <= 12) {
+                    finalValues.hh = formatNum(accumulator);
+                    isValid = true;
+                } else {
+                    errorMsg = "HOURS must be 1-12.";
+                }
+            } 
+            else if (phase === 1) { 
+                // MIN CHECK: Must be 0 to 59
+                if (accumulator >= 0 && accumulator <= 59) {
+                    finalValues.mm = formatNum(accumulator);
+                    isValid = true;
+                } else {
+                    errorMsg = "MINUTES must be 0-59.";
+                }
+            } 
+            else if (phase === 2) { 
+                // SEC CHECK: Must be 0 to 59
+                if (accumulator >= 0 && accumulator <= 59) {
+                    finalValues.ss = formatNum(accumulator);
+                    isValid = true;
+                } else {
+                    errorMsg = "SECONDS must be 0-59.";
+                }
+            }
+            else if (phase === 3) {
+                // AM/PM CHECK: Must be 0 or 1
+                if (accumulator === 0) {
+                    finalValues.ap = "AM";
+                    isValid = true;
+                } else if (accumulator === 1) {
+                    finalValues.ap = "PM";
+                    isValid = true;
+                } else {
+                    errorMsg = "INVALID MERIDIEM. 0=AM, 1=PM.";
+                }
             }
 
             if (isValid) {
-                // Success logic
-                if (phase === 0) finalTime.h = accumulator;
-                if (phase === 1) finalTime.m = accumulator;
-                if (phase === 2) finalTime.s = accumulator;
-
-                addToLog(`SUCCESS: ${type} ${accumulator} ACCEPTED.`);
+                // Move to next phase
                 phase++;
-                accumulator = 0; // Reset for next phase
+                accumulator = 0; // Reset accumulator for next round
+                updateStatusText();
                 updateDisplay();
-                nextPhase();
+                
+                if (phase > 3) {
+                    finish();
+                }
             } else {
-                // FAILURE logic (The Worst UI part)
-                alert(`ERROR: VALUE ${accumulator} IS INVALID FOR ${type}.\n\nRange must be 0-${limit}.\n\nPROTOCOL VIOLATION DETECTED.\nRESETTING ENTIRE FORM.`);
-                resetForm();
+                // FAILURE - THE PENALTY
+                alert(`ERROR: ${errorMsg}\n\nSYSTEM CRASH.\nRESETTING ALL DATA.`);
+                resetAll();
             }
         }
 
-        function nextPhase() {
-            if (phase === 1) {
-                instruction.innerText = "PHASE 2: Calibrating MINUTE Hand...";
-                instruction.style.backgroundColor = "#ffcc00"; // Slight color change
-            } else if (phase === 2) {
-                instruction.innerText = "PHASE 3: Calibrating SECOND Hand...";
-                instruction.style.backgroundColor = "#ff9900";
-            } else {
-                // Finished
-                instruction.innerText = "CALIBRATION COMPLETE";
-                instruction.style.backgroundColor = "#00ff00";
-                instruction.style.color = "black";
-                
-                // Format nicely
-                let h = finalTime.h.toString().padStart(2, '0');
-                let m = finalTime.m.toString().padStart(2, '0');
-                let s = finalTime.s.toString().padStart(2, '0');
-                
-                display.innerText = `${h}:${m}:${s}`;
-                
-                // Disable buttons
-                document.querySelectorAll('button').forEach(b => b.disabled = true);
-                addToLog("Alarm set. Good luck waking up.");
-                alert(`CONGRATULATIONS.\n\nAlarm set for ${h}:${m}:${s}.\n\nDo not close this browser window or the alarm will be lost.`);
+        function updateStatusText() {
+            let msg = "";
+            if (phase === 0) msg = "HOURS (1-12)";
+            if (phase === 1) msg = "MINUTES (0-59)";
+            if (phase === 2) msg = "SECONDS (0-59)";
+            if (phase === 3) msg = "MERIDIEM (0=AM, 1=PM)";
+            
+            if (phase <= 3) {
+                elStatus.innerHTML = `CURRENT TARGET: <span class="phase-indicator">${msg}</span>`;
             }
         }
 
-        function resetForm() {
+        function resetAll() {
             phase = 0;
             accumulator = 0;
-            finalTime = { h: 0, m: 0, s: 0 };
-            instruction.innerText = "PHASE 1: Calibrating HOUR Hand...";
-            instruction.style.backgroundColor = "#ffff00";
-            instruction.style.color = "red";
+            finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
+            updateStatusText();
             updateDisplay();
-            addToLog("--- SYSTEM RESET ---");
+            elLog.innerText = "System reset due to user incompetence.";
         }
+
+        function finish() {
+            elStatus.innerHTML = "<span style='color:#0f0'>ALARM ARMED SUCCESSFULLY</span>";
+            document.querySelector('.controls').style.display = 'none';
+            alert("Alarm set! Do not close this tab or the alarm will fail.");
+        }
+
+        // Initialize
+        updateDisplay();
     </script>
 </body>
 </html>
