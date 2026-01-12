@@ -191,11 +191,14 @@
 
             setTimeout(() => {
                 // The RNG Logic
-                let roll = Math.floor(Math.random() * 31) - 15; // -15 to +15
+                let roll = Math.floor(Math.random() * 21) - 10; // -10 to +10
                 if(roll === 0) roll = 1; // No zeros allowed
 
+                if((buffer+roll)>=-99 && (buffer+roll) <=99)
                 buffer += roll;
-                
+                else {buffer =0; // Safety cap
+                    addLog("Buffer overflow/underflow detected. Resetting buffer to 0.");            
+                }
                 ui.buffer.innerText = buffer;
                 ui.loader.style.display = 'none';
                 addLog(`Server returned: ${roll}. Buffer is now: ${buffer}`);
