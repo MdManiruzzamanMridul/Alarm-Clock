@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Accumulator | Worst UI 2026</title>
+    <style>
+        /* WARNING: THIS CSS IS DESIGNED TO BE UGLY ON PURPOSE */
+        body {
+            background-color: #d4d0c8; /* Windows 95 Gray */
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            cursor: progress; /* Always looks like it's loading */
+        }
+
+        .bureaucracy-card {
+            background-color: #ffffff;
+            border: 4px ridge #808080;
+            width: 500px;
+            padding: 20px;
+            box-shadow: 10px 10px 0px #000000;
+        }
+
+        h1 {
+            background-color: #000080;
+            color: white;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            font-size: 18px;
+            padding: 5px;
+            margin-top: 0;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .status-bar {
+            background-color: #ffff00;
+            color: red;
+            border: 1px dashed black;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .display-box {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 40px;
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border: 5px inset #d4d0c8;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 16px;
+            background-color: #c0c0c0;
+            border: 3px outset #fff;
+            cursor: help; /* Confusing cursor */
+        }
+
+        button:active {
+            border: 3px inset #fff;
+        }
+
+        .rng-btn {
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .log-area {
+            margin-top: 15px;
+            font-size: 10px;
+            color: #666;
+            height: 60px;
+            overflow-y: scroll;
+            border: 1px solid #999;
+            padding: 5px;
+        }
+
+        /* The annoying floating element */
+        #assistant {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            background: white;
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bureaucracy-card">
+        <h1>ALARM REQUISITION FORM v.4.0</h1>
+        
+        <div class="status-bar" id="instruction-text">
+            PHASE 1: Calibrating HOUR Hand...
+        </div>
+
+        <div class="display-box" id="current-value">
+            0
+        </div>
+
+        <div class="controls">
+            <button class="rng-btn" onclick="applyFluctuation()">
+                [ CLICK TO GENERATE INTEGER FLUCTUATION ]
+            </button>
+
+            <button class="submit-btn" onclick="submitValue()">
+                Submit Value & Request Next Phase
+            </button>
+            
+            <button onclick="resetForm()" style="font-size: 9px; color: red;">
+                Cancel & Destroy All Data
+            </button>
+        </div>
+
+        <div class="log-area" id="log">
+            SYSTEM LOG STARTED...<br>
+            Waiting for input...
+        </div>
+    </div>
+
+    <div id="assistant">
+        Tip: Don't exceed standard time limits.
+    </div>
+
+    <script>
+        // State Variables
+        let phase = 0; // 0=Hour, 1=Minute, 2=Second
+        let accumulator = 0; // The current running total
+        let finalTime = { h: 0, m: 0, s: 0 };
+        
+        // DOM Elements
+        const display = document.getElementById('current-value');
+        const instruction = document.getElementById('instruction-text');
+        const log = document.getElementById('log');
+
+        // Sounds (Optional, but adds to the pain if you had audio files)
+        
+        function updateDisplay() {
+            display.innerText = accumulator;
+        }
+
+        function addToLog(msg) {
+            log.innerHTML += `> ${msg}<br>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function applyFluctuation() {
+            // Generate random number between -15 and +15
+            // But exclude 0 because that's annoying in a boring way
+            let variance = Math.floor(Math.random() * 31) - 15; 
+            if (variance === 0) variance = 1; 
+
+            accumulator += variance;
+            
+            // Visual feedback
+            addToLog(`Applying variance: ${variance > 0 ? '+' : ''}${variance}`);
+            updateDisplay();
+        }
+
+        function submitValue() {
+            // Check based on phase
+            let isValid = false;
+            let limit = 0;
+            let type = "";
+
+            if (phase === 0) { // Hours
+                type = "HOUR";
+                limit = 23;
+                if (accumulator >= 0 && accumulator <= 23) isValid = true;
+            } else { // Minutes and Seconds
+                type = (phase === 1) ? "MINUTE" : "SECOND";
+                limit = 59;
+                if (accumulator >= 0 && accumulator <= 59) isValid = true;
+            }
+
+            if (isValid) {
+                // Success logic
+                if (phase === 0) finalTime.h = accumulator;
+                if (phase === 1) finalTime.m = accumulator;
+                if (phase === 2) finalTime.s = accumulator;
+
+                addToLog(`SUCCESS: ${type} ${accumulator} ACCEPTED.`);
+                phase++;
+                accumulator = 0; // Reset for next phase
+                updateDisplay();
+                nextPhase();
+            } else {
+                // FAILURE logic (The Worst UI part)
+                alert(`ERROR: VALUE ${accumulator} IS INVALID FOR ${type}.\n\nRange must be 0-${limit}.\n\nPROTOCOL VIOLATION DETECTED.\nRESETTING ENTIRE FORM.`);
+                resetForm();
+            }
+        }
+
+        function nextPhase() {
+            if (phase === 1) {
+                instruction.innerText = "PHASE 2: Calibrating MINUTE Hand...";
+                instruction.style.backgroundColor = "#ffcc00"; // Slight color change
+            } else if (phase === 2) {
+                instruction.innerText = "PHASE 3: Calibrating SECOND Hand...";
+                instruction.style.backgroundColor = "#ff9900";
+            } else {
+                // Finished
+                instruction.innerText = "CALIBRATION COMPLETE";
+                instruction.style.backgroundColor = "#00ff00";
+                instruction.style.color = "black";
+                
+                // Format nicely
+                let h = finalTime.h.toString().padStart(2, '0');
+                let m = finalTime.m.toString().padStart(2, '0');
+                let s = finalTime.s.toString().padStart(2, '0');
+                
+                display.innerText = `${h}:${m}:${s}`;
+                
+                // Disable buttons
+                document.querySelectorAll('button').forEach(b => b.disabled = true);
+                addToLog("Alarm set. Good luck waking up.");
+                alert(`CONGRATULATIONS.\n\nAlarm set for ${h}:${m}:${s}.\n\nDo not close this browser window or the alarm will be lost.`);
+            }
+        }
+
+        function resetForm() {
+            phase = 0;
+            accumulator = 0;
+            finalTime = { h: 0, m: 0, s: 0 };
+            instruction.innerText = "PHASE 1: Calibrating HOUR Hand...";
+            instruction.style.backgroundColor = "#ffff00";
+            instruction.style.color = "red";
+            updateDisplay();
+            addToLog("--- SYSTEM RESET ---");
+        }
+    </script>
+</body>
+</html>
