@@ -21,6 +21,19 @@
             overflow: hidden;
         }
 
+        /* The Runaway Button Style */
+        .btn-runaway {
+        position: absolute; /* Allows it to float anywhere */
+        transition: top 0.3s ease, left 0.3s ease; /* Smooth sliding */
+        z-index: 999; /* Make sure it stays on top of everything */
+        }
+
+        /* Important: Keep the card as the boundary */
+        .card-body {
+            position: relative; 
+            overflow: hidden; /* Don't let the button fly outside the box */
+                    }
+
         .card {
             border: 1px solid #444;
             box-shadow: 0 0 40px rgba(0,0,0,0.5);
@@ -155,162 +168,221 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // --- LOGIC ---
-        
-        let phase = 0; // 0=HH, 1=MM, 2=SS, 3=AM/PM
-        let buffer = 0;
-        let finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
-        let isProcessing = false;
+    // --- GLOBAL VARIABLES ---
+    let phase = 0; // 0=HH, 1=MM, 2=SS, 3=AM/PM
+    let buffer = 0; // Stores number for H/M/S, stores "AM"/"PM" string for last phase
+    let finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
+    let isProcessing = false;
 
-        const ui = {
-            hh: document.getElementById('seg-hh'),
-            mm: document.getElementById('seg-mm'),
-            ss: document.getElementById('seg-ss'),
-            ap: document.getElementById('seg-ap'),
-            buffer: document.getElementById('buffer-val'),
-            status: document.getElementById('status-text'),
-            loader: document.getElementById('loader'),
-            log: document.getElementById('log-container'),
-            card: document.getElementById('mainCard')
-        };
+    // DOM ELEMENTS
+    const ui = {
+        hh: document.getElementById('seg-hh'),
+        mm: document.getElementById('seg-mm'),
+        ss: document.getElementById('seg-ss'),
+        ap: document.getElementById('seg-ap'),
+        buffer: document.getElementById('buffer-val'),
+        status: document.getElementById('status-text'),
+        loader: document.getElementById('loader'),
+        log: document.getElementById('log-container'),
+        card: document.getElementById('mainCard')
+    };
 
-        function addLog(msg) {
-            const div = document.createElement('div');
-            div.innerText = `> ${msg}`;
-            ui.log.prepend(div); // Add to top
-        }
+    // SELECT THE COMMIT BUTTON
+    const commitBtn = document.querySelector('button[onclick="commitTransaction()"]');
+    const container = document.querySelector('.card-body');
 
-        // Simulates a slow server request
-        function requestInteger() {
-            if(isProcessing) return;
-            isProcessing = true;
-            ui.loader.style.display = 'flex'; // Show spinner
+    // --- HELPER FUNCTIONS ---
+    function addLog(msg) {
+        const div = document.createElement('div');
+        div.innerText = `> ${msg}`;
+        ui.log.prepend(div);
+    }
 
-            // Random delay between 500ms and 1500ms
-            const delay = Math.floor(Math.random() * 1000) + 500;
+    function resetButtonPosition() {
+        commitBtn.style.top = '';
+        commitBtn.style.left = '';
+        commitBtn.classList.remove('btn-runaway', 'btn-danger');
+        commitBtn.classList.add('btn-primary', 'btn-xl');
+        commitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Commit';
+    }
 
-            setTimeout(() => {
-                // The RNG Logic
-                let roll = Math.floor(Math.random() * 21) - 10; // -10 to +10
-                if(roll === 0) roll = 1; // No zeros allowed
+    // --- SERVER SIMULATION (UPDATED FOR AM/PM) ---
+    function requestInteger() {
+        if(isProcessing) return;
+        isProcessing = true;
+        ui.loader.style.display = 'flex';
 
-                if((buffer+roll)>=-99 && (buffer+roll) <=99)
-                buffer += roll;
-                else {buffer =0; // Safety cap
-                    addLog("Buffer overflow/underflow detected. Resetting buffer to 0.");            
-                }
-                ui.buffer.innerText = buffer;
-                ui.loader.style.display = 'none';
-                addLog(`Server returned: ${roll}. Buffer is now: ${buffer}`);
-                isProcessing = false;
-            }, delay);
-        }
+        // Fake delay (0.5s to 1.5s)
+        const delay = Math.floor(Math.random() * 1000) + 500;
 
-        function commitTransaction() {
-            if(isProcessing) return;
-
-            let isValid = false;
-            let errorText = "";
-
-            // Validation Logic
-            if(phase === 0) { // Hours
-                if(buffer >= 1 && buffer <= 12) {
-                    finalValues.hh = buffer.toString().padStart(2, '0');
-                    isValid = true;
-                } else errorText = "Hours must be between 1 and 12.";
-            } 
-            else if(phase === 1) { // Min
-                if(buffer >= 0 && buffer <= 59) {
-                    finalValues.mm = buffer.toString().padStart(2, '0');
-                    isValid = true;
-                } else errorText = "Minutes must be between 0 and 59.";
-            }
-            else if(phase === 2) { // Sec
-                if(buffer >= 0 && buffer <= 59) {
-                    finalValues.ss = buffer.toString().padStart(2, '0');
-                    isValid = true;
-                } else errorText = "Seconds must be between 0 and 59.";
-            }
-            else if(phase === 3) { // AM/PM
-                if(buffer === 0 || buffer === 1) {
-                    finalValues.ap = (buffer === 0) ? "AM" : "PM";
-                    isValid = true;
-                } else errorText = "Meridiem Identity unknown. 0=AM, 1=PM.";
-            }
-
-            if(isValid) {
-                // SUCCESS
-                addLog(`Phase ${phase} Committed Successfully.`);
-                phase++;
-                buffer = 0;
-                ui.buffer.innerText = "0";
-                updateDisplay();
-
-                if(phase > 3) {
-                    finishGame();
-                } else {
-                    // Update Status text
-                    const titles = ["Hours", "Minutes", "Seconds", "Meridiem"];
-                    ui.status.innerText = `Phase ${phase + 1}: Calibrating ${titles[phase]}...`;
-                }
-
+        setTimeout(() => {
+            
+            // LOGIC SPLIT:
+            // If Phase 3 (AM/PM), we just flip a coin.
+            // If Phase 0-2, we do the math.
+            
+            if (phase === 3) {
+                // 50/50 Chance for AM or PM
+                const result = Math.random() < 0.5 ? "AM" : "PM";
+                buffer = result; // Buffer becomes a string
+                
+                addLog(`Server returned: ${result}`);
             } else {
-                // FAILURE - SweetAlert Popup
-                Swal.fire({
-                    icon: 'error',
-                    title: 'CRITICAL FAILURE',
-                    text: `Validation Error: ${errorText} \n\nSystem integrity compromised. Resetting pipeline.`,
-                    background: '#222',
-                    color: '#fff'
-                }).then(() => {
-                    fullReset();
-                });
+                // Normal Math Logic
+                let roll = Math.floor(Math.random() * 31) - 15; 
+                if(roll === 0) roll = 1; 
+                buffer = parseInt(buffer) || 0; // Ensure it's an integer
+                buffer += roll;
+                addLog(`Server returned: ${roll}. Buffer is now: ${buffer}`);
+            }
+            
+            ui.buffer.innerText = buffer;
+            ui.loader.style.display = 'none';
+            isProcessing = false;
+
+        }, delay);
+    }
+
+    // --- COMMIT LOGIC (UPDATED VALIDATION) ---
+    function commitTransaction() {
+        resetButtonPosition();
+
+        if(isProcessing) return;
+
+        let isValid = false;
+        let errorText = "";
+
+        // Validation
+        if(phase === 0) { // Hours
+            if(buffer >= 1 && buffer <= 12) {
+                finalValues.hh = buffer.toString().padStart(2, '0');
+                isValid = true;
+            } else errorText = "Hours must be between 1 and 12.";
+        } 
+        else if(phase === 1) { // Min
+            if(buffer >= 0 && buffer <= 59) {
+                finalValues.mm = buffer.toString().padStart(2, '0');
+                isValid = true;
+            } else errorText = "Minutes must be between 0 and 59.";
+        }
+        else if(phase === 2) { // Sec
+            if(buffer >= 0 && buffer <= 59) {
+                finalValues.ss = buffer.toString().padStart(2, '0');
+                isValid = true;
+            } else errorText = "Seconds must be between 0 and 59.";
+        }
+        else if(phase === 3) { // AM/PM (New String Check)
+            if(buffer === "AM" || buffer === "PM") {
+                finalValues.ap = buffer;
+                isValid = true;
+            } else {
+                errorText = "Invalid Meridiem. Please request a value (AM/PM).";
             }
         }
 
-        function updateDisplay() {
-            // Update the display based on stored values
-            ui.hh.innerText = finalValues.hh;
-            ui.mm.innerText = finalValues.mm;
-            ui.ss.innerText = finalValues.ss;
-            ui.ap.innerText = finalValues.ap;
-
-            // Manage Highlight Classes
-            ui.hh.className = phase === 0 ? "active-segment" : "";
-            ui.mm.className = phase === 1 ? "active-segment" : "";
-            ui.ss.className = phase === 2 ? "active-segment" : "";
-            ui.ap.className = phase === 3 ? "active-segment" : "";
-        }
-
-        function fullReset() {
-            // Shake animation
-            ui.card.classList.add('animate__shakeX');
-            setTimeout(() => ui.card.classList.remove('animate__shakeX'), 1000);
-
-            phase = 0;
-            buffer = 0;
-            finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
-            ui.buffer.innerText = "0";
-            ui.status.innerText = "System Ready. Initializing Phase 1 (Hours)...";
-            addLog("!!! SYSTEM RESET TRIGGERED !!!");
+        if(isValid) {
+            // SUCCESS
+            addLog(`Phase ${phase} Committed Successfully.`);
+            phase++;
+            
+            // Reset Buffer for next phase
+            buffer = 0; 
+            ui.buffer.innerText = "WAITING..."; // Visual cue that buffer is empty
+            
             updateDisplay();
-        }
 
-        function finishGame() {
+            if(phase > 3) {
+                finishGame();
+            } else {
+                const titles = ["Hours", "Minutes", "Seconds", "Meridiem"];
+                // Special instruction for the last phase
+                let instruction = `Phase ${phase + 1}: Calibrating ${titles[phase]}...`;
+                if(phase === 3) instruction += " (Server will assign AM or PM)";
+                
+                ui.status.innerText = instruction;
+            }
+
+        } else {
+            // FAILURE
             Swal.fire({
-                icon: 'success',
-                title: 'ALARM SYNCHRONIZED',
-                text: `Alarm set for ${finalValues.hh}:${finalValues.mm}:${finalValues.ss} ${finalValues.ap}`,
+                icon: 'error',
+                title: 'CRITICAL FAILURE',
+                text: `Validation Error: ${errorText} \n\nSystem integrity compromised. Resetting pipeline.`,
                 background: '#222',
-                color: '#fff',
-                confirmButtonText: 'Suffer Again'
+                color: '#fff'
             }).then(() => {
                 fullReset();
             });
         }
+    }
 
-        // Init
+    function updateDisplay() {
+        ui.hh.innerText = finalValues.hh;
+        ui.mm.innerText = finalValues.mm;
+        ui.ss.innerText = finalValues.ss;
+        ui.ap.innerText = finalValues.ap;
+
+        ui.hh.className = phase === 0 ? "active-segment" : "";
+        ui.mm.className = phase === 1 ? "active-segment" : "";
+        ui.ss.className = phase === 2 ? "active-segment" : "";
+        ui.ap.className = phase === 3 ? "active-segment" : "";
+    }
+
+    function fullReset() {
+        ui.card.classList.add('animate__shakeX');
+        setTimeout(() => ui.card.classList.remove('animate__shakeX'), 1000);
+
+        phase = 0;
+        buffer = 0;
+        finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
+        ui.buffer.innerText = "0";
+        ui.status.innerText = "System Ready. Initializing Phase 1 (Hours)...";
+        
+        resetButtonPosition();
+        addLog("!!! SYSTEM RESET TRIGGERED !!!");
         updateDisplay();
-    </script>
+    }
+
+    function finishGame() {
+        Swal.fire({
+            icon: 'success',
+            title: 'ALARM SYNCHRONIZED',
+            text: `Alarm set for ${finalValues.hh}:${finalValues.mm}:${finalValues.ss} ${finalValues.ap}`,
+            background: '#222',
+            color: '#fff',
+            confirmButtonText: 'Suffer Again'
+        }).then(() => {
+            fullReset();
+        });
+    }
+
+    // --- RUNAWAY MOUSE EVENT ---
+    commitBtn.addEventListener('mouseover', function() {
+        // 85% chance to run away
+        if (Math.random() < 0.85) {
+            
+            commitBtn.classList.add('btn-runaway');
+            commitBtn.classList.remove('btn-xl'); // Shrink
+            
+            const maxX = container.clientWidth - commitBtn.clientWidth;
+            const maxY = container.clientHeight - commitBtn.clientHeight;
+            
+            const newX = Math.floor(Math.random() * maxX);
+            const newY = Math.floor(Math.random() * maxY);
+            
+            commitBtn.style.left = newX + 'px';
+            commitBtn.style.top = newY + 'px';
+            
+            const taunts = ["Too Slow!", "Missed Me!", "Try Again!", "Oops!", "Catch Me!"];
+            commitBtn.innerHTML = `<i class="fa-solid fa-person-running"></i> ${taunts[Math.floor(Math.random() * taunts.length)]}`;
+            
+            commitBtn.classList.remove('btn-primary');
+            commitBtn.classList.add('btn-danger');
+        }
+    });
+
+    // Init
+    updateDisplay();
+</script>
 </body>
 </html>
