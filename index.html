@@ -299,12 +299,12 @@
 
     <div id="layer-2" class="app-layer">
       <div class="survey-card animate__animated animate__fadeInUp">
-        <h3 class="text-white mb-4">Q&A</h3>
+        <h3 class="text-white mb-4">অঙ্গীকারনামা</h3>
 
         <div class="mb-4">
           <label class="form-label text-muted"
-            >Type "I will never do irony again in my whole 'VOET' life"
-            exactly:</label
+            >Type "I will never do irony again in my whole 'VOET' life" exactly:
+            (or suffer i dont care)</label
           >
           <input
             type="text"
@@ -318,7 +318,7 @@
             id="error-msg"
             style="display: none; font-size: 0.8rem"
           >
-            * TYPO DETECTED. RESTARTING.
+            *ভার্সিটিতে পড়িস, বানান জানিস না?* RESTARTING.
           </div>
         </div>
 
@@ -332,8 +332,18 @@
         </div>
 
         <button class="btn btn-success w-100" onclick="validateLayer2()">
-          Confirm & Verify
+          Confirm & Verify (সম্মুখপানে এগিয়ে চলো)
         </button>
+
+        <div class="mb-4">
+          <label class="form-label text-muted">
+            <br />
+            বি.দ্র. <br />
+            1.লেখা শেষ হলে বক্সে টিক দিয়ে button চাপুন<br />
+            2.সংখ্যা মিলে গেলে 'Commit' বাটনে ক্লিক করে সেভ করতে হবে<br />
+            3.মাঝে মাঝে 'CRANK' বাটনে ক্লিক করে Health বাড়ান<br />
+          </label>
+        </div>
       </div>
     </div>
 
@@ -342,13 +352,13 @@
         <div
           class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
         >
-          <span>ENTERPRISE ALARM v16.0</span>
-          <span class="badge bg-danger">BETA</span>
+          <span>ALARM CLOCK (অ্যালার্ম ঘড়ি)</span>
+          <span class="badge bg-danger">1.676767</span>
         </div>
 
         <div class="card-body p-4">
           <div class="mb-3" id="power-section">
-            <label class="text-muted small">SYSTEM POWER LEVEL</label>
+            <label class="text-muted small">Battery Health</label>
             <div class="progress" style="height: 25px; border: 1px solid #555">
               <div
                 id="battery-bar"
@@ -364,7 +374,8 @@
               class="btn btn-sm btn-outline-secondary w-100 mt-1"
               onclick="chargeBattery()"
             >
-              <i class="fa-solid fa-rotate-right"></i> CRANK
+              <i class="fa-solid fa-rotate-right"></i> CRANK (হেলথ বাড়ানোর জন্য
+              চাপ দিন)
             </button>
           </div>
 
@@ -385,7 +396,10 @@
             id="countdown-panel"
             style="display: none; text-align: center; margin-top: 20px"
           >
-            <h5 class="text-muted">TIME UNTIL DETONATION:</h5>
+            <h6 class="text-muted">কোথায় এলাম আমি?</h6>
+            <h6 class="text-muted">কিসের মাঝে, কেমন করে?</h6>
+            <h6 class="text-muted">এত আঁধার, আঁধার চারিপাশে</h6>
+            <h4 class="text-muted">TIME UNTIL DETONATION:</h4>
             <h1
               id="countdown-display"
               style="font-size: 3rem; color: yellow; font-family: 'Courier New'"
@@ -407,7 +421,8 @@
             </button>
             <div class="text-muted text-end">
               <span id="buffer-delta" class="delta-fade"></span>
-              BUFFER: <strong id="buffer-val" class="text-white fs-4">0</strong>
+              BUFFER (বর্তমান মান):
+              <strong id="buffer-val" class="text-white fs-4">0</strong>
             </div>
           </div>
 
@@ -417,7 +432,8 @@
                 class="btn btn-outline-warning btn-xl"
                 onclick="requestInteger()"
               >
-                Request Integer
+                বাবা &nbsp;&nbsp; <strike> দশ টাকা </strike> &nbsp;&nbsp; কিছু
+                সময় দাও
               </button>
             </div>
             <div class="col-4">
@@ -425,7 +441,7 @@
                 class="btn btn-primary btn-xl"
                 onclick="commitTransaction()"
               >
-                Commit
+                Commit (এগিয়ে যাও)
               </button>
             </div>
           </div>
@@ -728,20 +744,26 @@
           let displayRoll = ""; // This is the text we show (+5, -2, etc)
 
           if (phase === 3) {
-            // AM/PM Phase
             const result = Math.random() < 0.5 ? "AM" : "PM";
             buffer = result;
             displayRoll = result;
           } else {
-            // Number Phase
             let roll = Math.floor(Math.random() * 21) - 10;
             if (roll === 0) roll = 1;
 
             let temp = (typeof buffer === "number" ? buffer : 0) + roll;
-            buffer = temp;
 
-            // Format the text (Add + sign if positive)
-            displayRoll = (roll > 0 ? "+" : "") + roll;
+            // === THE LIMIT LOGIC (Overflow) ===
+            // If they go over 60 or under -60, RESET TO 0
+            if (temp > 60 || temp < -60) {
+              playErrorSound(); // Punish them with noise
+              buffer = 0;
+              displayRoll = "ERR"; // Show error text
+              isOverflow = true;
+            } else {
+              buffer = temp;
+              displayRoll = (roll > 0 ? "+" : "") + roll;
+            }
           }
 
           // === DELTA ANIMATION LOGIC ===
@@ -822,7 +844,12 @@
               showConfirmButton: false,
             }).then(() => activateSystemCountdown());
           } else {
-            const t = ["Hours", "Minutes", "Seconds", "Meridiem"];
+            const t = [
+              "Hours (ঘন্টা)",
+              "Minutes (মিনিট)",
+              "Seconds (সেকেন্ড)",
+              "Meridiem (এএম/পিএম)",
+            ];
             ui.status.innerText = `Phase ${phase + 1}: ${t[phase]}...`;
           }
         } else {
