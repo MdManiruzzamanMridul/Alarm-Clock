@@ -1,388 +1,966 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Enterprise Alarm Solutions™</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
     <style>
-        body {
-            background-color: #1a1d20;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+      body {
+        background-color: #1a1d20;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        user-select: none;
+        margin: 0;
+        padding: 0;
+      }
 
-        /* The Runaway Button Style */
-        .btn-runaway {
-        position: absolute; /* Allows it to float anywhere */
-        transition: top 0.3s ease, left 0.3s ease; /* Smooth sliding */
-        z-index: 999; /* Make sure it stays on top of everything */
-        }
+      body.inverted-inputs {
+        cursor: none !important;
+      }
 
-        /* Important: Keep the card as the boundary */
-        .card-body {
-            position: relative; 
-            overflow: hidden; /* Don't let the button fly outside the box */
-                    }
+      #phantom-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 25px;
+        height: 25px;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red" stroke="white" stroke-width="2"><path d="M5.5 3.21l10.8 5.43-4.5 1.5 4.3 6.67-2.3 1.54-4.5-6.83-2.9 3.9V3.21z"/></svg>');
+        pointer-events: none;
+        z-index: 10000;
+        display: none;
+      }
 
-        .card {
-            border: 1px solid #444;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 600px;
-        }
+      .app-layer {
+        display: none;
+        width: 100%;
+        height: 100vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .active-layer {
+        display: flex;
+      }
 
-        .digital-display {
-            background: #000;
-            color: #00ff41; /* Hacker Green */
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 3rem;
-            font-weight: bold;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid #333;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-            position: relative;
-        }
+      #layer-1 {
+        /* Kept your background image setup */
+        position: relative;
+        overflow: hidden;
+        color: white;
+        cursor: pointer;
+      }
+      #boot-gif2 {
+        width: 90%;
+        height: 350px;
+        object-fit: contain;
+        border-top: 0px solid #444;
+        display: block;
+        opacity: 0.8;
+      }
+      .layer-1-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+      }
 
-        /* The glowing cursor effect */
-        .cursor-blink {
-            animation: blink 1s infinite;
+      .click-instruction {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #00ff41;
+        box-shadow: 0 0 20px #00ff41;
+        margin-top: 20px;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 0.8;
         }
-        @keyframes blink { 50% { opacity: 0; } }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.8;
+        }
+      }
 
-        .active-segment {
-            border-bottom: 4px solid #0d6efd; /* Bootstrap Blue Underline */
-            color: #fff;
-        }
+      .survey-card {
+        background: #222;
+        padding: 40px;
+        border: 1px solid #444;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+      }
 
-        .btn-xl {
-            padding: 15px 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            width: 100%;
-            border-radius: 0;
-            text-transform: uppercase;
-        }
+      .card {
+        border: 1px solid #444;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+        width: 100%;
+        max-width: 600px;
+        overflow: hidden;
+        animation: subtle-shake 4s infinite;
+        display: flex;
+        flex-direction: column;
+      }
 
-        .loading-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: none; /* Hidden by default */
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-family: monospace;
-            z-index: 10;
-            border-radius: 10px;
+      @keyframes subtle-shake {
+        0% {
+          transform: translate(0, 0);
         }
+        2% {
+          transform: translate(1px, 1px);
+        }
+        4% {
+          transform: translate(-1px, -1px);
+        }
+        6% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
 
-        #log-container {
-            height: 100px;
-            overflow-y: auto;
-            background: #111;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #aaa;
-            padding: 10px;
-            border-top: 1px solid #333;
+      @keyframes violent-shake {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
         }
+        25% {
+          transform: translate(5px, 5px) rotate(5deg);
+        }
+        50% {
+          transform: translate(-5px, -5px) rotate(-5deg);
+        }
+        75% {
+          transform: translate(5px, -5px) rotate(5deg);
+        }
+        100% {
+          transform: translate(-5px, 5px) rotate(-5deg);
+        }
+      }
+
+      .digital-display {
+        background: #000;
+        color: #00ff41;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 3rem;
+        font-weight: bold;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        border: 2px solid #333;
+        letter-spacing: 5px;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .active-segment {
+        border-bottom: 4px solid #0d6efd;
+        color: #fff;
+      }
+      .btn-xl {
+        padding: 15px 20px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        width: 100%;
+        border-radius: 0;
+        text-transform: uppercase;
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-family: monospace;
+        z-index: 10;
+        border-radius: 10px;
+      }
+
+      .btn-runaway {
+        position: absolute;
+        transition: top 0.3s ease, left 0.3s ease;
+        z-index: 999;
+      }
+      .card-body {
+        position: relative;
+        overflow: hidden;
+        padding-bottom: 0;
+      }
+      .danger-zone {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .btn-forbidden {
+        font-size: 10px;
+        letter-spacing: 1px;
+        background: #300;
+        color: red;
+        border: 1px dashed red;
+      }
+
+      #boot-gif {
+        width: 100%;
+        height: 100px;
+        object-fit: contain;
+        border-top: 2px solid #444;
+        display: block;
+        opacity: 0.8;
+      }
+
+      .crank-flash {
+        animation: flash 0.1s;
+        background-color: #fff !important;
+      }
+      @keyframes flash {
+        0% {
+          background: #fff;
+        }
+        100% {
+          background: transparent;
+        }
+      }
+
+      #bsod-layer {
+        background-color: #0078d7;
+        z-index: 9999;
+        cursor: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #bsod-img {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        display: block;
+      }
+
+      /* ADD THIS TO YOUR CSS */
+      .delta-fade {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(0);
+        transition: all 0.5s ease-out;
+        margin-right: 10px;
+        font-family: monospace;
+        font-size: 1.5rem;
+      }
+
+      .delta-visible {
+        opacity: 1;
+        transform: translateY(-10px); /* Moves up slightly */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="phantom-cursor"></div>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                
-                <div class="card animate__animated" id="mainCard">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <span><i class="fa-solid fa-clock"></i> ENTERPRISE ALARM CLOCK v9.2</span>
-                        <span class="badge bg-danger">BETA</span>
-                    </div>
-
-                    <div class="card-body p-4">
-                        
-                        <div class="alert alert-info d-flex align-items-center" role="alert">
-                            <i class="fa-solid fa-circle-info me-2"></i>
-                            <div id="status-text">
-                                System Ready. Initializing Phase 1 (Hours)...
-                            </div>
-                        </div>
-
-                        <div class="digital-display">
-                            <div class="loading-overlay" id="loader">
-                                <div>
-                                    <div class="spinner-border text-primary" role="status"></div>
-                                    <div class="mt-2">SYNCING...</div>
-                                </div>
-                            </div>
-                            
-                            <span id="seg-hh" class="active-segment">--</span> : 
-                            <span id="seg-mm">--</span> : 
-                            <span id="seg-ss">--</span> 
-                            <span id="seg-ap" style="font-size: 2rem;">--</span>
-                        </div>
-
-                        <div class="text-center mb-3 text-muted">
-                            BUFFER VALUE: <strong id="buffer-val" class="text-white fs-4">0</strong>
-                        </div>
-
-                        <div class="row g-2">
-                            <div class="col-8">
-                                <button class="btn btn-outline-warning btn-xl" onclick="requestInteger()">
-                                    <i class="fa-solid fa-dice"></i> Request Integer
-                                </button>
-                            </div>
-                            <div class="col-4">
-                                <button class="btn btn-primary btn-xl" onclick="commitTransaction()">
-                                    <i class="fa-solid fa-check"></i> Commit
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div id="log-container">
-                        <div>> SYSTEM BOOT SEQUENCE INITIATED...</div>
-                        <div>> WAITING FOR USER INPUT...</div>
-                    </div>
-                </div>
-
-            </div>
+    <div id="layer-1" class="app-layer active-layer" onclick="initAudioAndGo()">
+      <div class="layer-1-content">
+        <h1 class="display-1 fw-bold">𝐰𝐨𝐦𝐩 𝐰𝐨𝐦𝐩 🗿</h1>
+        <img
+          id="boot-gif2"
+          src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajZrYzYyZ21sdnlsejB5aXFhNWk4aHFrN200NDZwdWtycDRwYmZvcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XYZ9OXuxBNvPA8APXs/giphy.gif"
+          alt="System Activity"
+        />
+        <div class="click-instruction">
+          <h3><i class="fa-solid fa-power-off"></i> Lesgoo💩</h3>
         </div>
+      </div>
+    </div>
+
+    <div id="layer-2" class="app-layer">
+      <div class="survey-card animate__animated animate__fadeInUp">
+        <h3 class="text-white mb-4">Q&A</h3>
+
+        <div class="mb-4">
+          <label class="form-label text-muted"
+            >Type "I will never do irony again in my whole 'VOET' life"
+            exactly:</label
+          >
+          <input
+            type="text"
+            class="form-control bg-dark text-white border-secondary"
+            id="typing-challenge"
+            oninput="checkSpelling(this)"
+            autocomplete="off"
+          />
+          <div
+            class="form-text text-danger"
+            id="error-msg"
+            style="display: none; font-size: 0.8rem"
+          >
+            * TYPO DETECTED. RESTARTING.
+          </div>
+        </div>
+
+        <div class="mb-4 form-check">
+          <input type="checkbox" class="form-check-input" id="terms-check" />
+          <label class="form-check-label text-muted" for="terms-check">
+            I agree to the 🤏<span style="text-decoration: line-through"
+              >Soul Binding</span
+            >🤲 Terms & Conditions
+          </label>
+        </div>
+
+        <button class="btn btn-success w-100" onclick="validateLayer2()">
+          Confirm & Verify
+        </button>
+      </div>
+    </div>
+
+    <div id="layer-3" class="app-layer">
+      <div class="card animate__animated" id="mainCard">
+        <div
+          class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+        >
+          <span>ENTERPRISE ALARM v16.0</span>
+          <span class="badge bg-danger">BETA</span>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="mb-3" id="power-section">
+            <label class="text-muted small">SYSTEM POWER LEVEL</label>
+            <div class="progress" style="height: 25px; border: 1px solid #555">
+              <div
+                id="battery-bar"
+                class="progress-bar bg-success"
+                role="progressbar"
+                style="width: 100%"
+              >
+                100%
+              </div>
+            </div>
+            <button
+              id="crank-btn"
+              class="btn btn-sm btn-outline-secondary w-100 mt-1"
+              onclick="chargeBattery()"
+            >
+              <i class="fa-solid fa-rotate-right"></i> CRANK
+            </button>
+          </div>
+
+          <div class="alert alert-info p-2 small" id="status-text">
+            System Ready.
+          </div>
+
+          <div class="digital-display">
+            <div class="loading-overlay" id="loader">
+              <div class="spinner-border text-primary"></div>
+            </div>
+            <span id="seg-hh" class="active-segment">--</span> :
+            <span id="seg-mm">--</span> : <span id="seg-ss">--</span>
+            <span id="seg-ap" style="font-size: 2rem">--</span>
+          </div>
+
+          <div
+            id="countdown-panel"
+            style="display: none; text-align: center; margin-top: 20px"
+          >
+            <h5 class="text-muted">TIME UNTIL DETONATION:</h5>
+            <h1
+              id="countdown-display"
+              style="font-size: 3rem; color: yellow; font-family: 'Courier New'"
+            >
+              00:00:00
+            </h1>
+            <div class="alert alert-warning mt-2" id="alarm-status-msg">
+              <i class="fa-solid fa-triangle-exclamation fa-beat"></i> ALARM
+              ARMED
+            </div>
+          </div>
+
+          <div class="danger-zone" id="controls-1">
+            <button
+              class="btn btn-forbidden btn-sm"
+              onclick="triggerSuffering()"
+            >
+              DO NOT PRESS
+            </button>
+            <div class="text-muted text-end">
+              <span id="buffer-delta" class="delta-fade"></span>
+              BUFFER: <strong id="buffer-val" class="text-white fs-4">0</strong>
+            </div>
+          </div>
+
+          <div class="row g-2" id="controls-2">
+            <div class="col-8">
+              <button
+                class="btn btn-outline-warning btn-xl"
+                onclick="requestInteger()"
+              >
+                Request Integer
+              </button>
+            </div>
+            <div class="col-4">
+              <button
+                class="btn btn-primary btn-xl"
+                onclick="commitTransaction()"
+              >
+                Commit
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <img
+          id="boot-gif"
+          src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWZhbzlxaHg3Zml5Z2RtYjRzejJhMmc3aW8wamR0aGNhMjV2ZTAxaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zz9YbblScCLxRi9PBj/giphy.gif"
+          alt="System Activity"
+        />
+      </div>
+    </div>
+
+    <div id="bsod-layer" class="app-layer">
+      <img
+        id="bsod-img"
+        src="https://upload.wikimedia.org/wikipedia/commons/5/56/Bsodwindows10.png"
+        alt="BSOD"
+      />
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
-    // --- GLOBAL VARIABLES ---
-    let phase = 0; // 0=HH, 1=MM, 2=SS, 3=AM/PM
-    let buffer = 0; // Stores number for H/M/S, stores "AM"/"PM" string for last phase
-    let finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
-    let isProcessing = false;
+      // === AUDIO ENGINE ===
+      let audioCtx;
 
-    // DOM ELEMENTS
-    const ui = {
-        hh: document.getElementById('seg-hh'),
-        mm: document.getElementById('seg-mm'),
-        ss: document.getElementById('seg-ss'),
-        ap: document.getElementById('seg-ap'),
-        buffer: document.getElementById('buffer-val'),
-        status: document.getElementById('status-text'),
-        loader: document.getElementById('loader'),
-        log: document.getElementById('log-container'),
-        card: document.getElementById('mainCard')
-    };
+      function initAudio() {
+        if (!audioCtx)
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+      }
 
-    // SELECT THE COMMIT BUTTON
-    const commitBtn = document.querySelector('button[onclick="commitTransaction()"]');
-    const container = document.querySelector('.card-body');
+      function playClickSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(
+          300,
+          audioCtx.currentTime + 0.1
+        );
+        gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioCtx.currentTime + 0.1
+        );
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+      }
 
-    // --- HELPER FUNCTIONS ---
-    function addLog(msg) {
-        const div = document.createElement('div');
-        div.innerText = `> ${msg}`;
-        ui.log.prepend(div);
-    }
+      function playErrorSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      }
 
-    function resetButtonPosition() {
-        commitBtn.style.top = '';
-        commitBtn.style.left = '';
-        commitBtn.classList.remove('btn-runaway', 'btn-danger');
-        commitBtn.classList.add('btn-primary', 'btn-xl');
-        commitBtn.innerHTML = '<i class="fa-solid fa-check"></i> Commit';
-    }
+      function playCrankSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(
+          50,
+          audioCtx.currentTime + 0.05
+        );
+        gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(
+          0.001,
+          audioCtx.currentTime + 0.05
+        );
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+      }
 
-    // --- SERVER SIMULATION (UPDATED FOR AM/PM) ---
-    function requestInteger() {
-        if(isProcessing) return;
+      function playBSODSound() {
+        if (!audioCtx) return;
+        const bufferSize = audioCtx.sampleRate * 2.0;
+        const buffer = audioCtx.createBuffer(
+          1,
+          bufferSize,
+          audioCtx.sampleRate
+        );
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * 0.5;
+        }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioCtx.currentTime + 2.0
+        );
+        noise.connect(gain);
+        gain.connect(audioCtx.destination);
+        noise.start();
+      }
+
+      // NEW: ALARM SIREN SOUND
+      function playAlarmSound() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        // Modulation to sound like a siren
+        osc.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + 0.5);
+        osc.frequency.linearRampToValueAtTime(440, audioCtx.currentTime + 1.0);
+
+        gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+
+        // Loop the frequency modulation manually
+        const sirenInterval = setInterval(() => {
+          if (audioCtx.state === "closed") {
+            clearInterval(sirenInterval);
+            return;
+          }
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = "sawtooth";
+          o.frequency.setValueAtTime(440, audioCtx.currentTime);
+          o.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + 0.5);
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          o.start();
+          o.stop(audioCtx.currentTime + 0.5);
+        }, 500);
+      }
+
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("button") && e.target.id !== "crank-btn") {
+          playClickSound();
+        }
+      });
+
+      const targetPhrase =
+        "I will never do irony again in my whole 'VOET' life";
+
+      function checkSpelling(input) {
+        const currentVal = input.value;
+        const errorMsg = document.getElementById("error-msg");
+
+        // Check if what they typed SO FAR matches the beginning of the target phrase
+        if (!targetPhrase.startsWith(currentVal)) {
+          // ERROR FOUND:
+          playErrorSound(); // Uses your existing error sound
+          input.value = ""; // WIPE THE INPUT (The rage element)
+
+          // Show error text briefly
+          errorMsg.style.display = "block";
+          setTimeout(() => (errorMsg.style.display = "none"), 1000);
+
+          // Shake the input box
+          input.classList.add("animate__animated", "animate__shakeX");
+          setTimeout(
+            () =>
+              input.classList.remove("animate__animated", "animate__shakeX"),
+            500
+          );
+        }
+      }
+
+      function validateLayer2() {
+        const input = document.getElementById("typing-challenge");
+        const checkbox = document.getElementById("terms-check");
+
+        // 1. Check if text is completely finished
+        // 2. Check if checkbox is checked
+        if (input.value === targetPhrase && checkbox.checked) {
+          goToLayer3(); // Proceed to the alarm clock
+        } else {
+          playErrorSound();
+          // SweetAlert error if they try to skip
+          Swal.fire({
+            icon: "error",
+            title: "ACCESS DENIED",
+            text: "You must type the phrase perfectly AND accept the terms.",
+            background: "#222",
+            color: "#fff",
+          });
+        }
+      }
+
+      // === APP LOGIC ===
+      function initAudioAndGo() {
+        initAudio();
+        document.getElementById("layer-1").classList.remove("active-layer");
+        document.getElementById("layer-2").classList.add("active-layer");
+      }
+
+      function goToLayer3() {
+        playClickSound();
+        Swal.fire({
+          title: "Verifying...",
+          timer: 1000,
+          timerProgressBar: true,
+          didOpen: () => Swal.showLoading(),
+          background: "#222",
+          color: "#fff",
+        }).then(() => {
+          document.getElementById("layer-2").classList.remove("active-layer");
+          document.getElementById("layer-3").classList.add("active-layer");
+          startBatteryDrain();
+        });
+      }
+
+      function updatePhoneDisplay(val) {
+        let s = val.toString();
+        document.getElementById("phone-display").innerText = `${s.substring(
+          0,
+          3
+        )}-${s.substring(3, 6)}-${s.substring(6, 10)}`;
+      }
+
+      // === ALARM LOGIC ===
+      let phase = 0;
+      let buffer = 0;
+      let finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
+      let isProcessing = false;
+      let batteryLevel = 100;
+      let battInterval;
+
+      const ui = {
+        hh: document.getElementById("seg-hh"),
+        mm: document.getElementById("seg-mm"),
+        ss: document.getElementById("seg-ss"),
+        ap: document.getElementById("seg-ap"),
+        buffer: document.getElementById("buffer-val"),
+        status: document.getElementById("status-text"),
+        loader: document.getElementById("loader"),
+        card: document.getElementById("mainCard"),
+      };
+      const commitBtn = document.querySelector(
+        'button[onclick="commitTransaction()"]'
+      );
+      const container = document.querySelector(".card-body");
+
+      function chargeBattery() {
+        playCrankSound();
+        if (batteryLevel < 100) batteryLevel += 15;
+        if (batteryLevel > 100) batteryLevel = 100;
+        const btn = document.getElementById("crank-btn");
+        btn.classList.add("crank-flash");
+        setTimeout(() => btn.classList.remove("crank-flash"), 100);
+      }
+
+      function startBatteryDrain() {
+        battInterval = setInterval(() => {
+          batteryLevel -= 0.5;
+          const bar = document.getElementById("battery-bar");
+          bar.style.width = Math.max(0, batteryLevel) + "%";
+          bar.innerText = Math.floor(Math.max(0, batteryLevel)) + "%";
+          bar.className = "progress-bar";
+          if (batteryLevel < 30) bar.classList.add("bg-danger");
+          else if (batteryLevel < 60) bar.classList.add("bg-warning");
+          else bar.classList.add("bg-success");
+          if (batteryLevel <= 0) {
+            clearInterval(battInterval);
+            triggerBSOD();
+          }
+        }, 100);
+      }
+
+      function triggerBSOD() {
+        playBSODSound();
+        document.getElementById("layer-3").classList.remove("active-layer");
+        document.getElementById("phantom-cursor").style.display = "none";
+        document.body.classList.remove("inverted-inputs");
+        document.getElementById("bsod-layer").classList.add("active-layer");
+        setTimeout(() => {
+          location.reload();
+        }, 15000);
+      }
+
+      function requestInteger() {
+        if (isProcessing) return;
         isProcessing = true;
-        ui.loader.style.display = 'flex';
-
-        // Fake delay (0.5s to 1.5s)
-        const delay = Math.floor(Math.random() * 1000) + 500;
+        ui.loader.style.display = "flex";
 
         setTimeout(() => {
-            
-            // LOGIC SPLIT:
-            // If Phase 3 (AM/PM), we just flip a coin.
-            // If Phase 0-2, we do the math.
-            
-            if (phase === 3) {
-                // 50/50 Chance for AM or PM
-                const result = Math.random() < 0.5 ? "AM" : "PM";
-                buffer = result; // Buffer becomes a string
-                
-                addLog(`Server returned: ${result}`);
-            } else {
-                // Normal Math Logic
-                let roll = Math.floor(Math.random() * 31) - 15; 
-                if(roll === 0) roll = 1; 
-                buffer = parseInt(buffer) || 0; // Ensure it's an integer
-                buffer += roll;
-                addLog(`Server returned: ${roll}. Buffer is now: ${buffer}`);
-            }
-            
-            ui.buffer.innerText = buffer;
-            ui.loader.style.display = 'none';
-            isProcessing = false;
+          let displayRoll = ""; // This is the text we show (+5, -2, etc)
 
-        }, delay);
-    }
+          if (phase === 3) {
+            // AM/PM Phase
+            const result = Math.random() < 0.5 ? "AM" : "PM";
+            buffer = result;
+            displayRoll = result;
+          } else {
+            // Number Phase
+            let roll = Math.floor(Math.random() * 21) - 10;
+            if (roll === 0) roll = 1;
 
-    // --- COMMIT LOGIC (UPDATED VALIDATION) ---
-    function commitTransaction() {
+            let temp = (typeof buffer === "number" ? buffer : 0) + roll;
+            buffer = temp;
+
+            // Format the text (Add + sign if positive)
+            displayRoll = (roll > 0 ? "+" : "") + roll;
+          }
+
+          // === DELTA ANIMATION LOGIC ===
+          const deltaEl = document.getElementById("buffer-delta");
+          deltaEl.innerText = displayRoll;
+
+          // Set Color: Red for negative, Green for positive/text
+          if (typeof buffer === "number" && displayRoll.includes("-")) {
+            deltaEl.style.color = "#ff4d4d"; // Red
+          } else {
+            deltaEl.style.color = "#00ff41"; // Green
+          }
+
+          // Trigger Animation (Reset -> Show -> Hide)
+          deltaEl.classList.remove("delta-visible");
+          void deltaEl.offsetWidth; // Force Reflow (Magic hack to restart animation)
+          deltaEl.classList.add("delta-visible");
+
+          // Hide it after 800ms
+          setTimeout(() => {
+            deltaEl.classList.remove("delta-visible");
+          }, 800);
+          // ==============================
+
+          ui.buffer.innerText = buffer;
+          ui.loader.style.display = "none";
+          isProcessing = false;
+        }, 300);
+      }
+
+      function resetButtonPosition() {
+        commitBtn.style.top = "";
+        commitBtn.style.left = "";
+        commitBtn.classList.remove("btn-runaway", "btn-danger");
+        commitBtn.classList.add("btn-primary", "btn-xl");
+        commitBtn.innerHTML = "Commit";
+      }
+
+      function commitTransaction() {
         resetButtonPosition();
-
-        if(isProcessing) return;
-
+        if (isProcessing) return;
         let isValid = false;
-        let errorText = "";
-
-        // Validation
-        if(phase === 0) { // Hours
-            if(buffer >= 1 && buffer <= 12) {
-                finalValues.hh = buffer.toString().padStart(2, '0');
-                isValid = true;
-            } else errorText = "Hours must be between 1 and 12.";
-        } 
-        else if(phase === 1) { // Min
-            if(buffer >= 0 && buffer <= 59) {
-                finalValues.mm = buffer.toString().padStart(2, '0');
-                isValid = true;
-            } else errorText = "Minutes must be between 0 and 59.";
-        }
-        else if(phase === 2) { // Sec
-            if(buffer >= 0 && buffer <= 59) {
-                finalValues.ss = buffer.toString().padStart(2, '0');
-                isValid = true;
-            } else errorText = "Seconds must be between 0 and 59.";
-        }
-        else if(phase === 3) { // AM/PM (New String Check)
-            if(buffer === "AM" || buffer === "PM") {
-                finalValues.ap = buffer;
-                isValid = true;
-            } else {
-                errorText = "Invalid Meridiem. Please request a value (AM/PM).";
-            }
+        if (phase === 0) {
+          if (buffer >= 1 && buffer <= 12) {
+            finalValues.hh = buffer.toString().padStart(2, "0");
+            isValid = true;
+          }
+        } else if (phase === 1) {
+          if (buffer >= 0 && buffer <= 59) {
+            finalValues.mm = buffer.toString().padStart(2, "0");
+            isValid = true;
+          }
+        } else if (phase === 2) {
+          if (buffer >= 0 && buffer <= 59) {
+            finalValues.ss = buffer.toString().padStart(2, "0");
+            isValid = true;
+          }
+        } else if (phase === 3) {
+          if (buffer === "AM" || buffer === "PM") {
+            finalValues.ap = buffer;
+            isValid = true;
+          }
         }
 
-        if(isValid) {
-            // SUCCESS
-            addLog(`Phase ${phase} Committed Successfully.`);
-            phase++;
-            
-            // Reset Buffer for next phase
-            buffer = 0; 
-            ui.buffer.innerText = "WAITING..."; // Visual cue that buffer is empty
-            
-            updateDisplay();
-
-            if(phase > 3) {
-                finishGame();
-            } else {
-                const titles = ["Hours", "Minutes", "Seconds", "Meridiem"];
-                // Special instruction for the last phase
-                let instruction = `Phase ${phase + 1}: Calibrating ${titles[phase]}...`;
-                if(phase === 3) instruction += " (Server will assign AM or PM)";
-                
-                ui.status.innerText = instruction;
-            }
-
-        } else {
-            // FAILURE
+        if (isValid) {
+          playClickSound();
+          phase++;
+          buffer = 0;
+          ui.buffer.innerText = "WAITING...";
+          updateDisplay();
+          if (phase > 3) {
+            // ALARM SUCCESSFULLY SET - START COUNTDOWN
             Swal.fire({
-                icon: 'error',
-                title: 'CRITICAL FAILURE',
-                text: `Validation Error: ${errorText} \n\nSystem integrity compromised. Resetting pipeline.`,
-                background: '#222',
-                color: '#fff'
-            }).then(() => {
-                fullReset();
-            });
+              icon: "success",
+              title: "ALARM SET",
+              text: `${finalValues.hh}:${finalValues.mm}:${finalValues.ss} ${finalValues.ap}`,
+              timer: 1500,
+              showConfirmButton: false,
+            }).then(() => activateSystemCountdown());
+          } else {
+            const t = ["Hours", "Minutes", "Seconds", "Meridiem"];
+            ui.status.innerText = `Phase ${phase + 1}: ${t[phase]}...`;
+          }
+        } else {
+          playErrorSound();
+          Swal.fire({
+            icon: "error",
+            title: "FAILURE",
+            text: "Invalid Value",
+            background: "#222",
+            color: "#fff",
+          }).then(() => fullReset());
         }
-    }
+      }
 
-    function updateDisplay() {
+      // === NEW: COUNTDOWN LOGIC ===
+      function activateSystemCountdown() {
+        // Stop battery drain (User succeeded, no need to punish anymore... yet)
+        clearInterval(battInterval);
+
+        // Hide controls
+        document.getElementById("controls-1").style.display = "none";
+        document.getElementById("controls-2").style.display = "none";
+        document.getElementById("power-section").style.display = "none";
+
+        // Show countdown
+        document.getElementById("countdown-panel").style.display = "block";
+        ui.status.innerText = "SYSTEM MONITORING...";
+
+        // Calculate Target Date
+        const now = new Date();
+        const target = new Date();
+        let h = parseInt(finalValues.hh);
+        const m = parseInt(finalValues.mm);
+        const s = parseInt(finalValues.ss);
+
+        // Convert 12h to 24h
+        if (finalValues.ap === "PM" && h !== 12) h += 12;
+        if (finalValues.ap === "AM" && h === 12) h = 0;
+
+        target.setHours(h, m, s, 0);
+
+        // If time has passed today, set for tomorrow
+        if (target < now) target.setDate(target.getDate() + 1);
+
+        const alarmInterval = setInterval(() => {
+          const currentTime = new Date();
+          const diff = target - currentTime;
+
+          if (diff <= 0) {
+            // TIME IS UP!
+            clearInterval(alarmInterval);
+            document.getElementById("countdown-display").innerText = "00:00:00";
+
+            // TRIGGER ALARM
+            playAlarmSound();
+
+            // Shake screen violently
+            document.body.style.animation = "violent-shake 0.5s infinite";
+            document.querySelector(".card").style.animation = "none";
+
+            // Show Wake Up UI
+            document.getElementById("countdown-panel").innerHTML = `
+                        <h1 class="text-danger display-1 fw-bold">WAKE UP!</h1>
+                        <button class="btn btn-danger btn-lg w-100 mt-4" onclick="location.reload()">DISABLE ALARM</button>
+                    `;
+          } else {
+            // Update Timer
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+            document.getElementById("countdown-display").innerText = `${hours
+              .toString()
+              .padStart(2, "0")}:${minutes
+              .toString()
+              .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+          }
+        }, 1000);
+      }
+
+      function updateDisplay() {
         ui.hh.innerText = finalValues.hh;
         ui.mm.innerText = finalValues.mm;
         ui.ss.innerText = finalValues.ss;
         ui.ap.innerText = finalValues.ap;
-
         ui.hh.className = phase === 0 ? "active-segment" : "";
         ui.mm.className = phase === 1 ? "active-segment" : "";
         ui.ss.className = phase === 2 ? "active-segment" : "";
         ui.ap.className = phase === 3 ? "active-segment" : "";
-    }
+      }
 
-    function fullReset() {
-        ui.card.classList.add('animate__shakeX');
-        setTimeout(() => ui.card.classList.remove('animate__shakeX'), 1000);
-
+      function fullReset() {
+        ui.card.classList.add("animate__shakeX");
+        setTimeout(() => ui.card.classList.remove("animate__shakeX"), 1000);
         phase = 0;
         buffer = 0;
         finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
         ui.buffer.innerText = "0";
-        ui.status.innerText = "System Ready. Initializing Phase 1 (Hours)...";
-        
+        ui.status.innerText = "System Ready...";
         resetButtonPosition();
-        addLog("!!! SYSTEM RESET TRIGGERED !!!");
         updateDisplay();
-    }
+      }
 
-    function finishGame() {
-        Swal.fire({
-            icon: 'success',
-            title: 'ALARM SYNCHRONIZED',
-            text: `Alarm set for ${finalValues.hh}:${finalValues.mm}:${finalValues.ss} ${finalValues.ap}`,
-            background: '#222',
-            color: '#fff',
-            confirmButtonText: 'Suffer Again'
-        }).then(() => {
-            fullReset();
-        });
-    }
-
-    // --- RUNAWAY MOUSE EVENT ---
-    commitBtn.addEventListener('mouseover', function() {
-        // 85% chance to run away
+      commitBtn.addEventListener("mouseover", function () {
         if (Math.random() < 0.85) {
-            
-            commitBtn.classList.add('btn-runaway');
-            commitBtn.classList.remove('btn-xl'); // Shrink
-            
-            const maxX = container.clientWidth - commitBtn.clientWidth;
-            const maxY = container.clientHeight - commitBtn.clientHeight;
-            
-            const newX = Math.floor(Math.random() * maxX);
-            const newY = Math.floor(Math.random() * maxY);
-            
-            commitBtn.style.left = newX + 'px';
-            commitBtn.style.top = newY + 'px';
-            
-            const taunts = ["Too Slow!", "Missed Me!", "Try Again!", "Oops!", "Catch Me!"];
-            commitBtn.innerHTML = `<i class="fa-solid fa-person-running"></i> ${taunts[Math.floor(Math.random() * taunts.length)]}`;
-            
-            commitBtn.classList.remove('btn-primary');
-            commitBtn.classList.add('btn-danger');
+          playErrorSound();
+          commitBtn.classList.add("btn-runaway", "btn-danger");
+          commitBtn.classList.remove("btn-xl", "btn-primary");
+          const maxX = container.clientWidth - 150;
+          const maxY = container.clientHeight - 60;
+          commitBtn.style.left =
+            Math.max(0, Math.floor(Math.random() * maxX)) + "px";
+          commitBtn.style.top =
+            Math.max(0, Math.floor(Math.random() * maxY)) + "px";
+          commitBtn.innerHTML = "Too Slow!";
         }
-    });
+      });
 
-    // Init
-    updateDisplay();
-</script>
-</body>
+      function triggerSuffering() {
+        playErrorSound();
+        Swal.fire({
+          icon: "warning",
+          title: "INVERTED",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+        document.body.classList.add("inverted-inputs");
+        document.getElementById("phantom-cursor").style.display = "block";
+      }
+
+      const phantom = document.getElementById("phantom-cursor");
+      document.addEventListener("mousemove", (e) => {
+        if (!document.body.classList.contains("inverted-inputs")) return;
+        phantom.style.transform = `translate(${
+          window.innerWidth - e.clientX
+        }px, ${window.innerHeight - e.clientY}px)`;
+      });
+
+      updateDisplay();
+    </script>
+  </body>
 </html>
