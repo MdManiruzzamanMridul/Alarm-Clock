@@ -278,6 +278,48 @@
         opacity: 1;
         transform: translateY(-10px); /* Moves up slightly */
       }
+
+      /* MOBILE RESPONSIVENESS */
+      @media (max-width: 768px) {
+        /* 1. Reset Container Widths */
+        .card,
+        .survey-card,
+        #layer-1 {
+          width: 95% !important; /* Use almost full screen width */
+          max-width: none !important; /* Remove the desktop limit */
+          margin: 10px auto; /* Center it */
+        }
+
+        /* 2. Resize Text for Small Screens */
+        .display-1 {
+          font-size: 3rem;
+        } /* Shrink "SYSTEM LOCKED" title */
+        .digital-display {
+          font-size: 2rem;
+          padding: 10px;
+        } /* Shrink Clock */
+        h1#countdown-display {
+          font-size: 2rem !important;
+        } /* Shrink Countdown */
+
+        /* 3. Adjust Layouts */
+        .btn-xl {
+          padding: 10px;
+          font-size: 1rem;
+        } /* Smaller buttons */
+
+        /* 4. Fix the GIF sizing */
+        #boot-gif2 {
+          height: 100%;
+          object-fit: cover;
+        }
+
+        /* 5. Disable the "Runaway Button" on mobile (Hover doesn't exist on touch) */
+        /* Instead, we make it jump on 'touchstart' via JS, but for CSS we just ensure it fits */
+        .btn-runaway {
+          position: static !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -954,20 +996,22 @@
         updateDisplay();
       }
 
-      commitBtn.addEventListener("mouseover", function () {
-        if (Math.random() < 0.85) {
-          playErrorSound();
-          commitBtn.classList.add("btn-runaway", "btn-danger");
-          commitBtn.classList.remove("btn-xl", "btn-primary");
-          const maxX = container.clientWidth - 150;
-          const maxY = container.clientHeight - 60;
-          commitBtn.style.left =
-            Math.max(0, Math.floor(Math.random() * maxX)) + "px";
-          commitBtn.style.top =
-            Math.max(0, Math.floor(Math.random() * maxY)) + "px";
-          commitBtn.innerHTML = "Too Slow!";
-        }
-      });
+      ["mouseover", "touchstart"].forEach((evt) =>
+        commitBtn.addEventListener(evt, function (e) {
+          if (Math.random() < 0.85) {
+            playErrorSound();
+            commitBtn.classList.add("btn-runaway", "btn-danger");
+            commitBtn.classList.remove("btn-xl", "btn-primary");
+            const maxX = container.clientWidth - 150;
+            const maxY = container.clientHeight - 60;
+            commitBtn.style.left =
+              Math.max(0, Math.floor(Math.random() * maxX)) + "px";
+            commitBtn.style.top =
+              Math.max(0, Math.floor(Math.random() * maxY)) + "px";
+            commitBtn.innerHTML = "Too Slow!";
+          }
+        })
+      );
 
       function triggerSuffering() {
         playErrorSound();
