@@ -35,52 +35,50 @@
         cursor: none !important;
       }
 
-      /* 1. MAKE THE MAIN CARD LOOK LIKE A THICK PLASTIC BOX */
+      /* 3D CHUNKY UI STYLES */
       .card,
       .survey-card {
         border: 4px solid #333 !important;
-        /* This creates a hard 3D shadow on the bottom and right */
         box-shadow: 10px 10px 0px #000000,
           inset 2px 2px 0px rgba(255, 255, 255, 0.1) !important;
-        transform: translate(
-          -5px,
-          -5px
-        ); /* Move it up slightly so shadow looks real */
+        transform: translate(-5px, -5px);
       }
 
-      /* 2. MAKE THE GREEN/DIGITAL SCREEN LOOK "SUNKEN" (INSET) */
       .digital-display {
         border: 4px solid #111 !important;
-        /* Inner shadow makes it look deep inside the device */
         box-shadow: inset 5px 5px 15px rgba(0, 0, 0, 0.9) !important;
         background: #050505 !important;
+        color: #00ff41;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 3rem;
+        font-weight: bold;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        letter-spacing: 5px;
+        margin-bottom: 20px;
+        position: relative;
       }
 
-      /* 3. MAKE BUTTONS LOOK LIKE PHYSICAL CHUNKY KEYS */
       .btn {
         position: relative;
         border: 2px solid rgba(0, 0, 0, 0.5) !important;
-        /* The 3D "Side" of the button */
         box-shadow: 0px 6px 0px rgba(0, 0, 0, 0.6) !important;
         transition: all 0.1s !important;
-        margin-bottom: 6px !important; /* Make room for the shadow */
+        margin-bottom: 6px !important;
       }
-
-      /* 4. ANIMATE THE BUTTON PRESS */
       .btn:active {
-        top: 6px; /* Move down physically */
-        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.6) !important; /* Shadow disappears */
+        top: 6px;
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.6) !important;
       }
 
-      /* 5. MAKE THE BATTERY BAR LOOK LIKE A GLASS TUBE */
       .progress {
         border: 2px solid #555;
         background: #222;
-        box-shadow: inset 2px 2px 5px #000; /* Sunken tube */
+        box-shadow: inset 2px 2px 5px #000;
         border-radius: 10px;
       }
       .progress-bar {
-        /* Shiny highlight on top half */
         background-image: linear-gradient(
           to bottom,
           rgba(255, 255, 255, 0.3) 0%,
@@ -113,8 +111,8 @@
         display: flex;
       }
 
+      /* LAYER 1 STYLES */
       #layer-1 {
-        /* Kept your background image setup */
         position: relative;
         overflow: hidden;
         color: white;
@@ -133,7 +131,6 @@
         z-index: 2;
         text-align: center;
       }
-
       .click-instruction {
         background: rgba(0, 0, 0, 0.5);
         padding: 20px;
@@ -155,18 +152,14 @@
         }
       }
 
+      /* LAYER 2 & 3 STYLES */
       .survey-card {
         background: #222;
         padding: 40px;
-        border: 1px solid #444;
-        max-width: 500px;
         width: 90%;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        max-width: 500px;
       }
-
       .card {
-        border: 1px solid #444;
-        box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
         width: 100%;
         max-width: 600px;
         overflow: hidden;
@@ -192,7 +185,6 @@
           transform: translate(0, 0);
         }
       }
-
       @keyframes violent-shake {
         0% {
           transform: translate(0, 0) rotate(0deg);
@@ -209,21 +201,6 @@
         100% {
           transform: translate(-5px, 5px) rotate(-5deg);
         }
-      }
-
-      .digital-display {
-        background: #000;
-        color: #00ff41;
-        font-family: "Courier New", Courier, monospace;
-        font-size: 3rem;
-        font-weight: bold;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        border: 2px solid #333;
-        letter-spacing: 5px;
-        margin-bottom: 20px;
-        position: relative;
       }
 
       .active-segment {
@@ -279,15 +256,6 @@
         border: 1px dashed red;
       }
 
-      #boot-gif {
-        width: 50%;
-        height: 100px;
-        object-fit: contain;
-        border-top: 2px solid #444;
-        display: block;
-        opacity: 0.8;
-      }
-
       .crank-flash {
         animation: flash 0.1s;
         background-color: #fff !important;
@@ -301,12 +269,12 @@
         }
       }
 
-      /* REALISTIC HTML-BASED BSOD */
+      /* BSOD STYLES */
       #bsod-layer {
         background-color: #0078d7;
         z-index: 9999;
         cursor: none;
-        padding: 10% 15%; /* Authentic spacing */
+        padding: 10% 15%;
         margin: 0;
         width: 100%;
         height: 100%;
@@ -317,6 +285,7 @@
         align-items: flex-start;
         justify-content: center;
       }
+      /* This class forces it to show when JS adds it */
       #bsod-layer.active-layer {
         display: flex !important;
       }
@@ -350,18 +319,17 @@
         line-height: 1.6;
       }
 
-      /* The "Lifeless" message animation */
       .lifeless-msg {
         font-size: 5rem;
         color: #000;
         font-weight: bold;
         text-transform: uppercase;
         animation: flash 0.2s infinite;
-        display: none; /* Hidden until 100% */
+        display: none;
         margin-top: 20px;
       }
 
-      /* ADD THIS TO YOUR CSS */
+      /* TEXT ANIMATION */
       .delta-fade {
         display: inline-block;
         opacity: 0;
@@ -371,64 +339,25 @@
         font-family: monospace;
         font-size: 1.5rem;
       }
-
       .delta-visible {
         opacity: 1;
-        transform: translateY(-10px); /* Moves up slightly */
+        transform: translateY(-10px);
       }
 
-      /* MOBILE RESPONSIVENESS */
-      @media (max-width: 768px) {
-        /* 1. Reset Container Widths */
-        .card,
-        .survey-card,
-        #layer-1 {
-          width: 95% !important; /* Use almost full screen width */
-          max-width: none !important; /* Remove the desktop limit */
-          margin: 10px auto; /* Center it */
-        }
-
-        /* 2. Resize Text for Small Screens */
-        .display-1 {
-          font-size: 3rem;
-        } /* Shrink "SYSTEM LOCKED" title */
-        .digital-display {
-          font-size: 2rem;
-          padding: 10px;
-        } /* Shrink Clock */
-        h1#countdown-display {
-          font-size: 2rem !important;
-        } /* Shrink Countdown */
-
-        /* 3. Adjust Layouts */
-        .btn-xl {
-          padding: 10px;
-          font-size: 1rem;
-        } /* Smaller buttons */
-
-        /* 4. Fix the GIF sizing */
-        #boot-gif2 {
-          height: 100%;
-          object-fit: cover;
-        }
-
-        /* 5. Disable the "Runaway Button" on mobile (Hover doesn't exist on touch) */
-        /* Instead, we make it jump on 'touchstart' via JS, but for CSS we just ensure it fits */
-        .btn-runaway {
-          position: static !important;
-        }
+      /* FOOTER & CLOCK */
+      .footer-row {
+        display: flex;
+        height: 100px;
+        width: 100%;
       }
-
-      /* ANALOG CLOCK STYLES */
       .clock-container {
-        width: 50%; /* Takes half the width */
+        width: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
         background: #000;
         border-top: 2px solid #444;
       }
-
       .analog-clock {
         width: 80px;
         height: 80px;
@@ -437,7 +366,6 @@
         position: relative;
         box-shadow: 0 0 10px #00ff41, inset 0 0 10px #00ff41;
       }
-
       .hand {
         position: absolute;
         bottom: 50%;
@@ -446,7 +374,6 @@
         background: #00ff41;
         border-radius: 2px;
       }
-
       .hour-hand {
         width: 4px;
         height: 25px;
@@ -474,11 +401,36 @@
         transform: translate(-50%, -50%);
       }
 
-      /* FOOTER LAYOUT (Holds GIF + Clock) */
-      .footer-row {
-        display: flex;
-        height: 100px;
-        width: 100%;
+      /* MOBILE */
+      @media (max-width: 768px) {
+        .card,
+        .survey-card,
+        #layer-1 {
+          width: 95% !important;
+          max-width: none !important;
+          margin: 10px auto;
+        }
+        .display-1 {
+          font-size: 3rem;
+        }
+        .digital-display {
+          font-size: 2rem;
+          padding: 10px;
+        }
+        h1#countdown-display {
+          font-size: 2rem !important;
+        }
+        .btn-xl {
+          padding: 10px;
+          font-size: 1rem;
+        }
+        #boot-gif2 {
+          height: 100%;
+          object-fit: cover;
+        }
+        .btn-runaway {
+          position: static !important;
+        }
       }
     </style>
   </head>
@@ -489,7 +441,6 @@
       <div class="layer-1-content">
         <h2>𝐰𝐨𝐦𝐩 𝐰𝐨𝐦𝐩 🗿</h2>
         <br />
-
         <img
           id="boot-gif2"
           src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExajZrYzYyZ21sdnlsejB5aXFhNWk4aHFrN200NDZwdWtycDRwYmZvcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XYZ9OXuxBNvPA8APXs/giphy.gif"
@@ -504,11 +455,10 @@
     <div id="layer-2" class="app-layer">
       <div class="survey-card animate__animated animate__fadeInUp">
         <h3 class="text-white mb-4">অঙ্গীকারনামা</h3>
-
         <div class="mb-4">
           <label class="form-label text-muted"
-            >Type "I will never do irony again in my whole 'VOET' life" exactly:
-            (or suffer i dont care)</label
+            >Type "I will never do irony again in my whole 'VOET' life"
+            exactly:</label
           >
           <input
             type="text"
@@ -526,29 +476,24 @@
             *ভার্সিটিতে পড়িস, বানান জানিস (জানেন) না?* RESTARTING.
           </div>
         </div>
-
         <div class="mb-4 form-check">
           <input type="checkbox" class="form-check-input" id="terms-check" />
-          <label class="form-check-label text-muted" for="terms-check">
-            I agree to the 🤏<span style="text-decoration: line-through"
+          <label class="form-check-label text-muted" for="terms-check"
+            >I agree to the 🤏<span style="text-decoration: line-through"
               >Soul Binding</span
-            >🤲 Terms & Conditions
-          </label>
+            >🤲 Terms & Conditions</label
+          >
         </div>
-
         <button class="btn btn-success w-100" onclick="validateLayer2()">
-          Confirm & Verify (সম্মুখপানে এগিয়ে চলো)
+          Confirm & Verify (সম্মুখপানে এগিয়ে চলো)
         </button>
-
         <div class="mb-4">
-          <label class="form-label text-muted">
-            <br />
-            বি.দ্র. <br />
-            1.লেখা শেষ হলে বক্সে টিক দিয়ে Button চাপুন<br />
-            2.হলুদ Button চাপ দিলে Random মান Generate হবে<br />
-            3.সংখ্যা মিলে গেলে Commit বাটনে ক্লিক করে সেভ করতে হবে<br />
-            4.মাঝে মাঝে CRANK বাটনে ক্লিক করে Health বাড়ান<br />
-          </label>
+          <label class="form-label text-muted"
+            ><br />বি.দ্র. <br />1.লেখা শেষ হলে বক্সে টিক দিয়ে Button চাপুন<br />2.হলুদ
+            Button চাপ দিলে Random মান Generate হবে<br />3.সংখ্যা মিলে গেলে
+            Commit বাটনে ক্লিক করে সেভ করতে হবে<br />4.মাঝে মাঝে CRANK বাটনে
+            ক্লিক করে Health বাড়ান</label
+          >
         </div>
       </div>
     </div>
@@ -558,8 +503,8 @@
         <div
           class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
         >
-          <span>ALARM CLOCK (অ্যালার্ম ঘড়ি)</span>
-          <span class="badge bg-danger">1.676767</span>
+          <span>ALARM CLOCK (অ্যালার্ম ঘড়ি)</span
+          ><span class="badge bg-danger">1.676767</span>
         </div>
 
         <div class="card-body p-4">
@@ -602,7 +547,7 @@
             id="countdown-panel"
             style="display: none; text-align: center; margin-top: 20px"
           >
-            <h6 class="text-muted">কোথায় এলাম আমি?</h6>
+            <h6 class="text-muted">কোথায় এলাম আমি?</h6>
             <h6 class="text-muted">কিসের মাঝে, কেমন করে?</h6>
             <h6 class="text-muted">এত আঁধার, আঁধার চারিপাশে</h6>
             <h4 class="text-muted">TIME UNTIL DETONATION:</h4>
@@ -647,7 +592,7 @@
                 class="btn btn-primary btn-xl"
                 onclick="commitTransaction()"
               >
-                Commit (এগিয়ে যাও)
+                Commit (এগিয়ে যাও)
               </button>
             </div>
           </div>
@@ -666,7 +611,6 @@
             src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWZhbzlxaHg3Zml5Z2RtYjRzejJhMmc3aW8wamR0aGNhMjV2ZTAxaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zz9YbblScCLxRi9PBj/giphy.gif"
             alt="System Activity"
           />
-
           <div class="clock-container">
             <div class="analog-clock">
               <div class="hand hour-hand" id="clock-hour"></div>
@@ -677,8 +621,8 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- <div id="bsod-layer" class="app-layer"> -->
     <div id="bsod-layer" class="app-layer">
       <div id="bsod-content">
         <div class="sad-face">:(</div>
@@ -703,15 +647,13 @@
           </div>
         </div>
       </div>
-
-      <div id="lifeless-text" class="lifeless-msg">LIFELESS</div>
+      <div id="lifeless-text" class="lifeless-msg">LIFELESS কোথাকার</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
       // === AUDIO ENGINE ===
       let audioCtx;
-
       function initAudio() {
         if (!audioCtx)
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -776,8 +718,6 @@
 
       function playBSODSound() {
         if (!audioCtx) return;
-
-        // Duration increased to 15 seconds to match the screen
         const duration = 15;
         const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(
@@ -786,72 +726,48 @@
           audioCtx.sampleRate
         );
         const data = buffer.getChannelData(0);
-
         for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * 0.5; // White noise
+          data[i] = (Math.random() * 2 - 1) * 0.5;
         }
-
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
         const gain = audioCtx.createGain();
-
         gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
-        // Fade out at the end of 15 seconds
         gain.gain.exponentialRampToValueAtTime(
           0.01,
           audioCtx.currentTime + duration
         );
-
         noise.connect(gain);
         gain.connect(audioCtx.destination);
         noise.start();
       }
 
-      // NEW: ALARM SIREN SOUND
-      // REPLACE YOUR EXISTING playAlarmSound FUNCTION WITH THIS
       function playAlarmSound() {
         if (!audioCtx) return;
-
-        // VOLUME MULTIPLIER (Starts at 0.5)
         let volumeMultiplier = 0.5;
-
-        // 1. Play the initial blast
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sawtooth";
         osc.frequency.setValueAtTime(440, audioCtx.currentTime);
         osc.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + 0.5);
         osc.frequency.linearRampToValueAtTime(440, audioCtx.currentTime + 1.0);
-
         gain.gain.setValueAtTime(volumeMultiplier, audioCtx.currentTime);
-
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
 
-        // 2. Start the Loop (Siren + Volume Increase)
         const sirenInterval = setInterval(() => {
           if (audioCtx.state === "closed") {
             clearInterval(sirenInterval);
             return;
           }
-
-          // === THE MULTIPLIER LOGIC ===
-          // Increase volume by 0.1 every 500ms (which is +0.2 every second)
           volumeMultiplier += 0.1;
-          // ============================
-
           const o = audioCtx.createOscillator();
           const g = audioCtx.createGain();
           o.type = "sawtooth";
-
-          // Modulate Frequency (Siren wail)
           o.frequency.setValueAtTime(440, audioCtx.currentTime);
           o.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + 0.5);
-
-          // Apply the NEW, LOUDER volume
           g.gain.setValueAtTime(volumeMultiplier, audioCtx.currentTime);
-
           o.connect(g);
           g.connect(audioCtx.destination);
           o.start();
@@ -865,24 +781,18 @@
         }
       });
 
+      // === APP LOGIC ===
       const targetPhrase =
         "I will never do irony again in my whole 'VOET' life";
 
       function checkSpelling(input) {
         const currentVal = input.value;
         const errorMsg = document.getElementById("error-msg");
-
-        // Check if what they typed SO FAR matches the beginning of the target phrase
         if (!targetPhrase.startsWith(currentVal)) {
-          // ERROR FOUND:
-          playErrorSound(); // Uses your existing error sound
-          input.value = ""; // WIPE THE INPUT (The rage element)
-
-          // Show error text briefly
+          playErrorSound();
+          input.value = "";
           errorMsg.style.display = "block";
           setTimeout(() => (errorMsg.style.display = "none"), 1000);
-
-          // Shake the input box
           input.classList.add("animate__animated", "animate__shakeX");
           setTimeout(
             () =>
@@ -895,14 +805,10 @@
       function validateLayer2() {
         const input = document.getElementById("typing-challenge");
         const checkbox = document.getElementById("terms-check");
-
-        // 1. Check if text is completely finished
-        // 2. Check if checkbox is checked
         if (input.value === targetPhrase && checkbox.checked) {
-          goToLayer3(); // Proceed to the alarm clock
+          goToLayer3();
         } else {
           playErrorSound();
-          // SweetAlert error if they try to skip
           Swal.fire({
             icon: "error",
             title: "ACCESS DENIED",
@@ -913,7 +819,6 @@
         }
       }
 
-      // === APP LOGIC ===
       function initAudioAndGo() {
         initAudio();
         document.getElementById("layer-1").classList.remove("active-layer");
@@ -936,15 +841,7 @@
         });
       }
 
-      function updatePhoneDisplay(val) {
-        let s = val.toString();
-        document.getElementById("phone-display").innerText = `${s.substring(
-          0,
-          3
-        )}-${s.substring(3, 6)}-${s.substring(6, 10)}`;
-      }
-
-      // === ALARM LOGIC ===
+      // === GAME STATE ===
       let phase = 0;
       let buffer = 0;
       let finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
@@ -995,99 +892,68 @@
 
       function triggerBSOD() {
         playBSODSound();
-
-        // 1. Hide the Game Layers
+        // 1. Hide Game
         document.getElementById("layer-3").classList.remove("active-layer");
         document.getElementById("phantom-cursor").style.display = "none";
         document.body.classList.remove("inverted-inputs");
 
-        // 2. Show BSOD Layer & Get Elements
+        // 2. Show BSOD
         const bsodLayer = document.getElementById("bsod-layer");
         const bsodContent = document.getElementById("bsod-content");
         const lifelessText = document.getElementById("lifeless-text");
         const progressSpan = document.getElementById("bsod-progress");
 
-        bsodLayer.classList.add("active-layer");
-        bsodLayer.style.display = "flex";
+        bsodLayer.classList.add("active-layer"); // Triggers flex display
 
-        // Reset BSOD state (Visible text, Hidden LIFELESS)
         bsodContent.style.display = "block";
         lifelessText.style.display = "none";
         progressSpan.innerText = "0%";
 
-        // 3. Start the Counter (15 seconds)
+        // 3. Counter
         let progress = 0;
         const duration = 15000;
-        const intervalTime = 100; // Update every 100ms
+        const intervalTime = 100;
         const increment = 100 / (duration / intervalTime);
 
         const timer = setInterval(() => {
           progress += increment;
-
-          // Randomize speed slightly for realism (stalls occasionally)
           if (Math.random() > 0.7) progress -= increment * 0.5;
 
           if (progress >= 100) {
             progress = 100;
             clearInterval(timer);
-
-            // 4. HIT 100% - SHOW "LIFELESS"
             progressSpan.innerText = "100%";
             setTimeout(() => {
-              bsodContent.style.display = "none"; // Hide details
-              lifelessText.style.display = "block"; // Show BIG TEXT
-              playErrorSound(); // Play loud buzzer
-
-              // 5. WAIT 3 SECONDS & RELOAD
+              bsodContent.style.display = "none";
+              lifelessText.style.display = "block";
+              playErrorSound();
               setTimeout(() => {
                 location.reload();
               }, 3000);
             }, 1000);
           }
-
           progressSpan.innerText = Math.floor(progress) + "%";
         }, intervalTime);
       }
 
-      // Helper function to reset the entire game state
-      function fullResetAndRestart() {
-        // Hide BSOD
-        const bsodLayer = document.getElementById("bsod-layer");
-        bsodLayer.classList.remove("active-layer");
-        bsodLayer.style.display = "none";
-
-        // Reset Game Variables
+      function fullReset() {
+        ui.card.classList.add("animate__shakeX");
+        setTimeout(() => ui.card.classList.remove("animate__shakeX"), 1000);
         phase = 0;
         buffer = 0;
         finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
-        batteryLevel = 100;
-        isProcessing = false;
-
-        // Reset UI Elements
         ui.buffer.innerText = "0";
         ui.status.innerText = "System Ready...";
-        document.getElementById("phone-display").innerText = "100-000-0000";
-        document.getElementById("typing-challenge").value = "";
-        document.getElementById("terms-check").checked = false;
-
-        // Reset Buttons/Controls
-        document.getElementById("controls-1").style.display = "flex";
-        document.getElementById("controls-2").style.display = "flex";
-        document.getElementById("power-section").style.display = "block";
-        document.getElementById("countdown-panel").style.display = "none";
-
-        // Go to Layer 1
-        document.getElementById("layer-1").classList.add("active-layer");
+        resetButtonPosition();
+        updateDisplay();
       }
 
       function requestInteger() {
         if (isProcessing) return;
         isProcessing = true;
         ui.loader.style.display = "flex";
-
         setTimeout(() => {
-          let displayRoll = ""; // This is the text we show (+5, -2, etc)
-
+          let displayRoll = "";
           if (phase === 3) {
             const result = Math.random() < 0.5 ? "AM" : "PM";
             buffer = result;
@@ -1095,43 +961,29 @@
           } else {
             let roll = Math.floor(Math.random() * 21) - 10;
             if (roll === 0) roll = 1;
-
             let temp = (typeof buffer === "number" ? buffer : 0) + roll;
-
-            // === THE LIMIT LOGIC (Overflow) ===
-            // If they go over 60 or under -60, RESET TO 0
             if (temp > 60 || temp < -60) {
-              playErrorSound(); // Punish them with noise
+              playErrorSound();
               buffer = 0;
-              displayRoll = "ERR"; // Show error text
-              isOverflow = true;
+              displayRoll = "ERR";
             } else {
               buffer = temp;
               displayRoll = (roll > 0 ? "+" : "") + roll;
             }
           }
 
-          // === DELTA ANIMATION LOGIC ===
           const deltaEl = document.getElementById("buffer-delta");
           deltaEl.innerText = displayRoll;
+          if (typeof buffer === "number" && displayRoll.includes("-"))
+            deltaEl.style.color = "#ff4d4d";
+          else deltaEl.style.color = "#00ff41";
 
-          // Set Color: Red for negative, Green for positive/text
-          if (typeof buffer === "number" && displayRoll.includes("-")) {
-            deltaEl.style.color = "#ff4d4d"; // Red
-          } else {
-            deltaEl.style.color = "#00ff41"; // Green
-          }
-
-          // Trigger Animation (Reset -> Show -> Hide)
           deltaEl.classList.remove("delta-visible");
-          void deltaEl.offsetWidth; // Force Reflow (Magic hack to restart animation)
+          void deltaEl.offsetWidth;
           deltaEl.classList.add("delta-visible");
-
-          // Hide it after 800ms
           setTimeout(() => {
             deltaEl.classList.remove("delta-visible");
           }, 800);
-          // ==============================
 
           ui.buffer.innerText = buffer;
           ui.loader.style.display = "none";
@@ -1151,26 +1003,18 @@
         resetButtonPosition();
         if (isProcessing) return;
         let isValid = false;
-        if (phase === 0) {
-          if (buffer >= 1 && buffer <= 12) {
-            finalValues.hh = buffer.toString().padStart(2, "0");
-            isValid = true;
-          }
-        } else if (phase === 1) {
-          if (buffer >= 0 && buffer <= 59) {
-            finalValues.mm = buffer.toString().padStart(2, "0");
-            isValid = true;
-          }
-        } else if (phase === 2) {
-          if (buffer >= 0 && buffer <= 59) {
-            finalValues.ss = buffer.toString().padStart(2, "0");
-            isValid = true;
-          }
-        } else if (phase === 3) {
-          if (buffer === "AM" || buffer === "PM") {
-            finalValues.ap = buffer;
-            isValid = true;
-          }
+        if (phase === 0 && buffer >= 1 && buffer <= 12) {
+          finalValues.hh = buffer.toString().padStart(2, "0");
+          isValid = true;
+        } else if (phase === 1 && buffer >= 0 && buffer <= 59) {
+          finalValues.mm = buffer.toString().padStart(2, "0");
+          isValid = true;
+        } else if (phase === 2 && buffer >= 0 && buffer <= 59) {
+          finalValues.ss = buffer.toString().padStart(2, "0");
+          isValid = true;
+        } else if (phase === 3 && (buffer === "AM" || buffer === "PM")) {
+          finalValues.ap = buffer;
+          isValid = true;
         }
 
         if (isValid) {
@@ -1180,7 +1024,6 @@
           ui.buffer.innerText = "WAITING...";
           updateDisplay();
           if (phase > 3) {
-            // ALARM SUCCESSFULLY SET - START COUNTDOWN
             Swal.fire({
               icon: "success",
               title: "ALARM SET",
@@ -1209,59 +1052,37 @@
         }
       }
 
-      // === NEW: COUNTDOWN LOGIC ===
       function activateSystemCountdown() {
-        // Stop battery drain (User succeeded, no need to punish anymore... yet)
         clearInterval(battInterval);
-
-        // Hide controls
         document.getElementById("controls-1").style.display = "none";
         document.getElementById("controls-2").style.display = "none";
         document.getElementById("power-section").style.display = "none";
-
-        // Show countdown
         document.getElementById("countdown-panel").style.display = "block";
         ui.status.innerText = "SYSTEM MONITORING...";
 
-        // Calculate Target Date
         const now = new Date();
         const target = new Date();
         let h = parseInt(finalValues.hh);
         const m = parseInt(finalValues.mm);
         const s = parseInt(finalValues.ss);
-
-        // Convert 12h to 24h
         if (finalValues.ap === "PM" && h !== 12) h += 12;
         if (finalValues.ap === "AM" && h === 12) h = 0;
-
         target.setHours(h, m, s, 0);
-
-        // If time has passed today, set for tomorrow
         if (target < now) target.setDate(target.getDate() + 1);
 
         const alarmInterval = setInterval(() => {
           const currentTime = new Date();
           const diff = target - currentTime;
-
           if (diff <= 0) {
-            // TIME IS UP!
             clearInterval(alarmInterval);
             document.getElementById("countdown-display").innerText = "00:00:00";
-
-            // TRIGGER ALARM
             playAlarmSound();
-
-            // Shake screen violently
             document.body.style.animation = "violent-shake 0.5s infinite";
             document.querySelector(".card").style.animation = "none";
-
-            // Show Wake Up UI
-            document.getElementById("countdown-panel").innerHTML = `
-                        <h1 class="text-danger display-1 fw-bold">WAKE UP!</h1>
-                        <button class="btn btn-danger btn-lg w-100 mt-4" onclick="location.reload()">DISABLE ALARM</button>
-                    `;
+            document.getElementById(
+              "countdown-panel"
+            ).innerHTML = `<h1 class="text-danger display-1 fw-bold">WAKE UP!</h1><button class="btn btn-danger btn-lg w-100 mt-4" onclick="location.reload()">DISABLE ALARM</button>`;
           } else {
-            // Update Timer
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
             const seconds = Math.floor((diff / 1000) % 60);
@@ -1285,18 +1106,6 @@
         ui.ap.className = phase === 3 ? "active-segment" : "";
       }
 
-      function fullReset() {
-        ui.card.classList.add("animate__shakeX");
-        setTimeout(() => ui.card.classList.remove("animate__shakeX"), 1000);
-        phase = 0;
-        buffer = 0;
-        finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
-        ui.buffer.innerText = "0";
-        ui.status.innerText = "System Ready...";
-        resetButtonPosition();
-        updateDisplay();
-      }
-
       ["mouseover", "touchstart"].forEach((evt) =>
         commitBtn.addEventListener(evt, function (e) {
           if (Math.random() < 0.85) {
@@ -1318,7 +1127,7 @@
         playErrorSound();
         Swal.fire({
           icon: "warning",
-          title: "শুভকামনা...",
+          title: "INVERTED",
           showConfirmButton: false,
           timer: 1000,
         });
@@ -1334,18 +1143,15 @@
         }px, ${window.innerHeight - e.clientY}px)`;
       });
 
-      // === REAL-TIME ANALOG CLOCK ===
       function startAnalogClock() {
         setInterval(() => {
           const now = new Date();
           const seconds = now.getSeconds();
           const minutes = now.getMinutes();
           const hours = now.getHours();
-
           const secDeg = (seconds / 60) * 360;
           const minDeg = (minutes / 60) * 360 + (seconds / 60) * 6;
           const hourDeg = (hours / 12) * 360 + (minutes / 60) * 30;
-
           document.getElementById(
             "clock-sec"
           ).style.transform = `rotate(${secDeg}deg)`;
@@ -1357,10 +1163,7 @@
           ).style.transform = `rotate(${hourDeg}deg)`;
         }, 1000);
       }
-
-      // CALL THIS TO START
       startAnalogClock();
-
       updateDisplay();
     </script>
   </body>
