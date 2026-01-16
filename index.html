@@ -35,6 +35,60 @@
         cursor: none !important;
       }
 
+      /* 1. MAKE THE MAIN CARD LOOK LIKE A THICK PLASTIC BOX */
+      .card,
+      .survey-card {
+        border: 4px solid #333 !important;
+        /* This creates a hard 3D shadow on the bottom and right */
+        box-shadow: 10px 10px 0px #000000,
+          inset 2px 2px 0px rgba(255, 255, 255, 0.1) !important;
+        transform: translate(
+          -5px,
+          -5px
+        ); /* Move it up slightly so shadow looks real */
+      }
+
+      /* 2. MAKE THE GREEN/DIGITAL SCREEN LOOK "SUNKEN" (INSET) */
+      .digital-display {
+        border: 4px solid #111 !important;
+        /* Inner shadow makes it look deep inside the device */
+        box-shadow: inset 5px 5px 15px rgba(0, 0, 0, 0.9) !important;
+        background: #050505 !important;
+      }
+
+      /* 3. MAKE BUTTONS LOOK LIKE PHYSICAL CHUNKY KEYS */
+      .btn {
+        position: relative;
+        border: 2px solid rgba(0, 0, 0, 0.5) !important;
+        /* The 3D "Side" of the button */
+        box-shadow: 0px 6px 0px rgba(0, 0, 0, 0.6) !important;
+        transition: all 0.1s !important;
+        margin-bottom: 6px !important; /* Make room for the shadow */
+      }
+
+      /* 4. ANIMATE THE BUTTON PRESS */
+      .btn:active {
+        top: 6px; /* Move down physically */
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.6) !important; /* Shadow disappears */
+      }
+
+      /* 5. MAKE THE BATTERY BAR LOOK LIKE A GLASS TUBE */
+      .progress {
+        border: 2px solid #555;
+        background: #222;
+        box-shadow: inset 2px 2px 5px #000; /* Sunken tube */
+        border-radius: 10px;
+      }
+      .progress-bar {
+        /* Shiny highlight on top half */
+        background-image: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0) 50%,
+          rgba(0, 0, 0, 0.1) 100%
+        );
+      }
+
       #phantom-cursor {
         position: fixed;
         top: 0;
@@ -226,7 +280,7 @@
       }
 
       #boot-gif {
-        width: 100%;
+        width: 50%;
         height: 100px;
         object-fit: contain;
         border-top: 2px solid #444;
@@ -247,7 +301,7 @@
         }
       }
 
-      #bsod-layer {
+      /* #bsod-layer {
         background-color: #0078d7;
         z-index: 9999;
         cursor: none;
@@ -261,7 +315,43 @@
         height: 100%;
         object-fit: fill;
         display: block;
-      }
+      } */
+
+
+      /* REALISTIC HTML-BASED BSOD */
+  #bsod-layer {
+    background-color: #0078d7; 
+    z-index: 9999; 
+    cursor: none; 
+    padding: 10% 15%; /* Authentic spacing */
+    margin: 0; 
+    width: 100%; 
+    height: 100%;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.sad-face { font-size: 120px; margin-bottom: 30px; }
+.bsod-title { font-size: 28px; margin-bottom: 30px; line-height: 1.4; }
+.bsod-percent { font-size: 24px; margin-bottom: 30px; }
+.bsod-details { display: flex; align-items: center; gap: 20px; font-size: 14px; }
+.qr-code { background: white; padding: 4px; width: 100px; height: 100px; }
+.stop-code { line-height: 1.6; }
+
+/* The "Lifeless" message animation */
+.lifeless-msg {
+    font-size: 5rem;
+    color: #000;
+    font-weight: bold;
+    text-transform: uppercase;
+    animation: flash 0.2s infinite;
+    display: none; /* Hidden until 100% */
+    margin-top: 20px;
+}
 
       /* ADD THIS TO YOUR CSS */
       .delta-fade {
@@ -319,6 +409,68 @@
         .btn-runaway {
           position: static !important;
         }
+      }
+
+      /* ANALOG CLOCK STYLES */
+      .clock-container {
+        width: 50%; /* Takes half the width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+        border-top: 2px solid #444;
+      }
+
+      .analog-clock {
+        width: 80px;
+        height: 80px;
+        border: 4px solid #00ff41;
+        border-radius: 50%;
+        position: relative;
+        box-shadow: 0 0 10px #00ff41, inset 0 0 10px #00ff41;
+      }
+
+      .hand {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        transform-origin: bottom;
+        background: #00ff41;
+        border-radius: 2px;
+      }
+
+      .hour-hand {
+        width: 4px;
+        height: 25px;
+        margin-left: -2px;
+      }
+      .min-hand {
+        width: 2px;
+        height: 35px;
+        margin-left: -1px;
+      }
+      .sec-hand {
+        width: 1px;
+        height: 38px;
+        margin-left: -0.5px;
+        background: red;
+      }
+      .center-dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background: #00ff41;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      /* FOOTER LAYOUT (Holds GIF + Clock) */
+      .footer-row {
+        display: flex;
+        height: 100px;
+        width: 100%;
       }
     </style>
   </head>
@@ -478,8 +630,8 @@
                 class="btn btn-outline-warning btn-xl"
                 onclick="requestInteger()"
               >
-                বাবা &nbsp;&nbsp; <strike> দশ টাকা </strike> &nbsp;&nbsp; কিছু
-                সময় দাও
+                বাবা &nbsp; <strike> দশ টাকা </strike> &nbsp;&nbsp; কিছু সময়
+                দাও
               </button>
             </div>
             <div class="col-4">
@@ -493,21 +645,52 @@
           </div>
         </div>
 
-        <img
-          id="boot-gif"
-          src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWZhbzlxaHg3Zml5Z2RtYjRzejJhMmc3aW8wamR0aGNhMjV2ZTAxaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zz9YbblScCLxRi9PBj/giphy.gif"
-          alt="System Activity"
-        />
-      </div>
+        <div class="footer-row">
+          <img
+            id="boot-gif"
+            style="
+              width: 50%;
+              height: 100%;
+              object-fit: cover;
+              border-top: 2px solid #444;
+              border-right: 2px solid #444;
+            "
+            src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWZhbzlxaHg3Zml5Z2RtYjRzejJhMmc3aW8wamR0aGNhMjV2ZTAxaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zz9YbblScCLxRi9PBj/giphy.gif"
+            alt="System Activity"
+          />
+
+          <div class="clock-container">
+            <div class="analog-clock">
+              <div class="hand hour-hand" id="clock-hour"></div>
+              <div class="hand min-hand" id="clock-min"></div>
+              <div class="hand sec-hand" id="clock-sec"></div>
+              <div class="center-dot"></div>
+            </div>
+          </div>
+        </div>
     </div>
 
     <div id="bsod-layer" class="app-layer">
-      <img
-        id="bsod-img"
-        src="https://upload.wikimedia.org/wikipedia/commons/5/56/Bsodwindows10.png"
-        alt="BSOD"
-      />
+    <div id="bsod-content">
+        <div class="sad-face">:(</div>
+        <div class="bsod-title">
+            Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.
+        </div>
+        <div class="bsod-percent">
+            <span id="bsod-progress">0%</span> complete
+        </div>
+        <div class="bsod-details">
+            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.youtube.com/watch?v=dQw4w9WgXcQ" alt="QR">
+            <div class="stop-code">
+                For more information about this issue and possible fixes, visit https://www.windows.com/stopcode<br><br>
+                If you call a support person, give them this info:<br>
+                Stop code: CRITICAL_PROCESS_DIED
+            </div>
+        </div>
     </div>
+    
+    <div id="lifeless-text" class="lifeless-msg">LIFELESS</div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -602,33 +785,50 @@
       }
 
       // NEW: ALARM SIREN SOUND
+      // REPLACE YOUR EXISTING playAlarmSound FUNCTION WITH THIS
       function playAlarmSound() {
         if (!audioCtx) return;
+
+        // VOLUME MULTIPLIER (Starts at 0.5)
+        let volumeMultiplier = 0.5;
+
+        // 1. Play the initial blast
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sawtooth";
         osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-        // Modulation to sound like a siren
         osc.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + 0.5);
         osc.frequency.linearRampToValueAtTime(440, audioCtx.currentTime + 1.0);
 
-        gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+        gain.gain.setValueAtTime(volumeMultiplier, audioCtx.currentTime);
 
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
 
-        // Loop the frequency modulation manually
+        // 2. Start the Loop (Siren + Volume Increase)
         const sirenInterval = setInterval(() => {
           if (audioCtx.state === "closed") {
             clearInterval(sirenInterval);
             return;
           }
+
+          // === THE MULTIPLIER LOGIC ===
+          // Increase volume by 0.1 every 500ms (which is +0.2 every second)
+          volumeMultiplier += 0.1;
+          // ============================
+
           const o = audioCtx.createOscillator();
           const g = audioCtx.createGain();
           o.type = "sawtooth";
+
+          // Modulate Frequency (Siren wail)
           o.frequency.setValueAtTime(440, audioCtx.currentTime);
           o.frequency.linearRampToValueAtTime(880, audioCtx.currentTime + 0.5);
+
+          // Apply the NEW, LOUDER volume
+          g.gain.setValueAtTime(volumeMultiplier, audioCtx.currentTime);
+
           o.connect(g);
           g.connect(audioCtx.destination);
           o.start();
@@ -683,7 +883,7 @@
           Swal.fire({
             icon: "error",
             title: "ACCESS DENIED",
-            text: "You must type the phrase perfectly AND accept the terms.",
+            text: "ঠিকমতো লিখুন এবং Terms এক্সেপ্ট করুন",
             background: "#222",
             color: "#fff",
           });
@@ -700,7 +900,7 @@
       function goToLayer3() {
         playClickSound();
         Swal.fire({
-          title: "Verifying...",
+          title: "চলিতেছে সার্কাস...",
           timer: 1000,
           timerProgressBar: true,
           didOpen: () => Swal.showLoading(),
@@ -746,7 +946,7 @@
 
       function chargeBattery() {
         playCrankSound();
-        if (batteryLevel < 100) batteryLevel += 15;
+        if (batteryLevel < 100) batteryLevel += 5;
         if (batteryLevel > 100) batteryLevel = 100;
         const btn = document.getElementById("crank-btn");
         btn.classList.add("crank-flash");
@@ -755,7 +955,7 @@
 
       function startBatteryDrain() {
         battInterval = setInterval(() => {
-          batteryLevel -= 0.5;
+          batteryLevel -= 1;
           const bar = document.getElementById("battery-bar");
           bar.style.width = Math.max(0, batteryLevel) + "%";
           bar.innerText = Math.floor(Math.max(0, batteryLevel)) + "%";
@@ -771,15 +971,91 @@
       }
 
       function triggerBSOD() {
-        playBSODSound();
-        document.getElementById("layer-3").classList.remove("active-layer");
-        document.getElementById("phantom-cursor").style.display = "none";
-        document.body.classList.remove("inverted-inputs");
-        document.getElementById("bsod-layer").classList.add("active-layer");
-        setTimeout(() => {
-          location.reload();
-        }, 15000);
-      }
+    playBSODSound(); // Play the static noise
+    
+    // 1. Hide the Game Layers
+    document.getElementById('layer-3').classList.remove('active-layer');
+    document.getElementById('phantom-cursor').style.display = 'none';
+    document.body.classList.remove('inverted-inputs');
+    
+    // 2. Show BSOD Layer
+    const bsodLayer = document.getElementById('bsod-layer');
+    const bsodContent = document.getElementById('bsod-content');
+    const lifelessText = document.getElementById('lifeless-text');
+    const progressSpan = document.getElementById('bsod-progress');
+    
+    bsodLayer.classList.add('active-layer');
+    bsodLayer.style.display = 'flex'; // Ensure flex layout works
+    
+    // Reset BSOD state
+    bsodContent.style.display = 'block';
+    lifelessText.style.display = 'none';
+    progressSpan.innerText = "0%";
+
+    // 3. Start the Counter (15 seconds = 15000ms)
+    let progress = 0;
+    const duration = 15000; 
+    const intervalTime = 100; // Update every 100ms
+    const increment = 100 / (duration / intervalTime); // Math to reach 100 evenly
+
+    const timer = setInterval(() => {
+        progress += increment;
+        
+        // Randomize speed slightly for realism (stalling at certain numbers)
+        if (Math.random() > 0.7) progress -= (increment * 0.5); 
+        
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(timer);
+            
+            // 4. HIT 100% - SHOW "LIFELESS"
+            progressSpan.innerText = "100%";
+            setTimeout(() => {
+                bsodContent.style.display = 'none'; // Hide standard BSOD text
+                lifelessText.style.display = 'block'; // Show LIFELESS
+                playErrorSound(); // Play loud buzzer
+                
+                // 5. WAIT 3 SECONDS & GO TO PHASE 1
+                setTimeout(() => {
+                    fullResetAndRestart();
+                }, 3000);
+            }, 1000);
+        }
+        
+        progressSpan.innerText = Math.floor(progress) + "%";
+    }, intervalTime);
+}
+
+// Helper function to reset the entire game state
+function fullResetAndRestart() {
+    // Hide BSOD
+    const bsodLayer = document.getElementById('bsod-layer');
+    bsodLayer.classList.remove('active-layer');
+    bsodLayer.style.display = 'none';
+
+    // Reset Game Variables
+    phase = 0; 
+    buffer = 0; 
+    finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" }; 
+    batteryLevel = 100; 
+    isProcessing = false;
+
+    // Reset UI Elements
+    ui.buffer.innerText = "0";
+    ui.status.innerText = "System Ready...";
+    document.getElementById('phone-display').innerText = "100-000-0000";
+    document.getElementById('typing-challenge').value = "";
+    document.getElementById('terms-check').checked = false;
+    
+    // Reset Buttons/Controls
+    document.getElementById('controls-1').style.display = 'flex';
+    document.getElementById('controls-2').style.display = 'flex';
+    document.getElementById('power-section').style.display = 'block';
+    document.getElementById('countdown-panel').style.display = 'none';
+    
+    // Go to Layer 1
+    document.getElementById('layer-1').classList.add('active-layer');
+}
 
       function requestInteger() {
         if (isProcessing) return;
@@ -1034,6 +1310,29 @@
           window.innerWidth - e.clientX
         }px, ${window.innerHeight - e.clientY}px)`;
       });
+
+
+      // === REAL-TIME ANALOG CLOCK ===
+    function startAnalogClock() {
+    setInterval(() => {
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const minutes = now.getMinutes();
+        const hours = now.getHours();
+
+        const secDeg = ((seconds / 60) * 360);
+        const minDeg = ((minutes / 60) * 360) + ((seconds/60)*6);
+        const hourDeg = ((hours / 12) * 360) + ((minutes/60)*30);
+
+        document.getElementById('clock-sec').style.transform = `rotate(${secDeg}deg)`;
+        document.getElementById('clock-min').style.transform = `rotate(${minDeg}deg)`;
+        document.getElementById('clock-hour').style.transform = `rotate(${hourDeg}deg)`;
+    }, 1000);
+}
+
+// CALL THIS TO START
+startAnalogClock();
+
 
       updateDisplay();
     </script>
