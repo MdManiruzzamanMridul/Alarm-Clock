@@ -188,18 +188,23 @@
       @keyframes violent-shake {
         0% {
           transform: translate(0, 0) rotate(0deg);
+          background-color: #1a1d20;
         }
         25% {
           transform: translate(5px, 5px) rotate(5deg);
-        }
+          background-color: #ff0000;
+        } /* Flash Red */
         50% {
           transform: translate(-5px, -5px) rotate(-5deg);
-        }
+          background-color: #3e06f6;
+        } /* Flash Black */
         75% {
           transform: translate(5px, -5px) rotate(5deg);
-        }
+          background-color: #0f7300;
+        } /* Flash Red */
         100% {
           transform: translate(-5px, 5px) rotate(-5deg);
+          background-color: #f3f4f5;
         }
       }
 
@@ -418,6 +423,7 @@
     <div id="layer-1" class="app-layer active-layer" onclick="initAudioAndGo()">
       <div class="layer-1-content">
         <h2>𝐰𝐨𝐦𝐩 𝐰𝐨𝐦𝐩 🗿</h2>
+        <h6><strike> BCF25 </strike> &nbsp; BCF26 or whatever</h6>
         <br />
         <img
           id="boot-gif2"
@@ -435,7 +441,9 @@
         <h3 class="text-white mb-4">অঙ্গীকারনামা</h3>
         <div class="mb-4">
           <label class="form-label text-muted"
-            >Type "I will never do irony again in my whole 'VOET' life"
+            >Type <br />
+            "I will never do irony again in my whole 'VOET' life. From now on, ami ja bolibo shotto bolibo, shotto chara ar kichu bolibo na."
+            <br />
             exactly:</label
           >
           <input
@@ -467,11 +475,15 @@
         </button>
         <div class="mb-4">
           <label class="form-label text-muted"
-            ><br />বি.দ্র. <br />1.লেখা শেষ হলে বক্সে টিক দিয়ে Button চাপুন<br />2.হলুদ
-            Button চাপ দিলে Random মান Generate হবে<br />3.সংখ্যা মিলে গেলে
-            Commit বাটনে ক্লিক করে সেভ করতে হবে<br />4.মাঝে মাঝে CRANK বাটনে
-            ক্লিক করে Health বাড়ান</label
-          >
+            ><br />বি.দ্র. <br />
+            <br />
+            <h6 style="color: rgb(239, 89, 89)">
+              1. এই ধাপটি স্কিপ করতে চাইলে "Enter" key চাপ দিন </h6>
+              2.হলুদ Button চাপ দিলে Random মান Generate হবে<br />3.সংখ্যা মিলে
+              গেলে Commit বাটনে ক্লিক করে সেভ করতে হবে<br />4.মাঝে মাঝে CRANK
+              বাটনে ক্লিক করে Health বাড়ান <br />
+            </h6>
+          </label>
         </div>
       </div>
     </div>
@@ -622,7 +634,9 @@
           </div>
         </div>
       </div>
-      <div id="lifeless-text" class="lifeless-msg">LIFELESS কোথাকার</div>
+      <div id="lifeless-text" class="lifeless-msg">
+        &nbsp;&nbsp;LIFELESS কোথাকার&nbsp;&nbsp;
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -758,7 +772,7 @@
 
       // === APP LOGIC ===
       const targetPhrase =
-        "I will never do irony again in my whole 'VOET' life";
+        "I will never do irony again in my whole 'VOET' life. From now on, ami ja bolibo shotto bolibo, shotto chara ar kichu bolibo na.";
 
       function checkSpelling(input) {
         const currentVal = input.value;
@@ -786,13 +800,85 @@
           playErrorSound();
           Swal.fire({
             icon: "error",
-            title: "ACCESS DENIED",
+            title: "Warning!",
             text: "ঠিকমতো লিখুন এবং Terms এক্সেপ্ট করুন",
             background: "#222",
             color: "#fff",
           });
         }
       }
+
+
+      // === CHEAT CODE SYSTEM (DESKTOP & MOBILE) ===
+
+      // 1. THE SHARED CHEAT FUNCTION
+      async function runCheatSequence() {
+          const { value: code } = await Swal.fire({
+            title: "CHEAT CODE",
+            input: "password",
+            inputLabel: "CODE টা দিন:",
+            inputValue: "", 
+            inputAttributes: {
+              autocomplete: "new-password", 
+              name: "cheat-code-" + Math.random() 
+            },
+            didOpen: () => {
+                const input = Swal.getInput();
+                if (input) input.value = "";
+            },
+            background: "#000",
+            color: "#00ff41",
+            confirmButtonColor: "#d33",
+            confirmButtonText: "BYPASS",
+          });
+
+          if (code === "666") {
+            playClickSound();
+            goToLayer3(); // SUCCESS
+          } else if (code) {
+            playErrorSound();
+            Swal.fire({
+              icon: "error",
+              title: "বাবা একশ টাকা দাও",
+              text: "Send Money to 01783267644 (Bkash/Nagad/Rocket) to get the correct code.",
+              background: "#222",
+              color: "#fff",
+            });
+          }
+      }
+
+      // 2. DESKTOP TRIGGER (Enter Key)
+      document.addEventListener("keydown", function (e) {
+        const layer2 = document.getElementById("layer-2");
+        const isLayer2Active = layer2.classList.contains("active-layer");
+
+        if (e.key === "Enter" && isLayer2Active) {
+          e.preventDefault();
+          runCheatSequence();
+        }
+      });
+
+      // 3. MOBILE TRIGGER (Triple Tap on Title)
+      // Users can tap the "অঙ্গীকারনামা" text 3 times to open the menu
+      let tapCount = 0;
+      let tapTimer;
+      const cheatTitle = document.querySelector('#layer-2 h3'); // Selects the header
+      
+      if(cheatTitle) {
+          cheatTitle.addEventListener('click', (e) => {
+              tapCount++;
+              clearTimeout(tapTimer);
+              
+              // Reset tap count if they stop tapping for 500ms
+              tapTimer = setTimeout(() => { tapCount = 0; }, 500);
+
+              if (tapCount === 3) {
+                  tapCount = 0; // Reset
+                  runCheatSequence(); // Launch Cheat
+              }
+          });
+      }
+
 
       function initAudioAndGo() {
         initAudio();
@@ -1019,8 +1105,8 @@
           playErrorSound();
           Swal.fire({
             icon: "error",
-            title: "FAILURE",
-            text: "Invalid Value",
+            title: "আপনি ব্যর্থ",
+            text: "সময় কি কখনো ঋণাত্মক হয়?",
             background: "#222",
             color: "#fff",
           }).then(() => fullReset());
@@ -1052,7 +1138,7 @@
             clearInterval(alarmInterval);
             document.getElementById("countdown-display").innerText = "00:00:00";
             playAlarmSound();
-            document.body.style.animation = "violent-shake 0.5s infinite";
+            document.body.style.animation = "violent-shake 0.2s infinite";
             document.querySelector(".card").style.animation = "none";
             document.getElementById(
               "countdown-panel"
