@@ -301,57 +301,65 @@
         }
       }
 
-      /* #bsod-layer {
+      /* REALISTIC HTML-BASED BSOD */
+      #bsod-layer {
         background-color: #0078d7;
         z-index: 9999;
         cursor: none;
-        padding: 0;
+        padding: 10% 15%; /* Authentic spacing */
         margin: 0;
         width: 100%;
         height: 100%;
+        color: white;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: none; /* Hidden by default */
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
       }
-      #bsod-img {
-        width: 100%;
-        height: 100%;
-        object-fit: fill;
-        display: block;
-      } */
+      #bsod-layer.active-layer {
+        display: flex !important;
+      }
 
+      .sad-face {
+        font-size: 120px;
+        margin-bottom: 30px;
+      }
+      .bsod-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+        line-height: 1.4;
+      }
+      .bsod-percent {
+        font-size: 24px;
+        margin-bottom: 30px;
+      }
+      .bsod-details {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 14px;
+      }
+      .qr-code {
+        background: white;
+        padding: 4px;
+        width: 100px;
+        height: 100px;
+      }
+      .stop-code {
+        line-height: 1.6;
+      }
 
-      /* REALISTIC HTML-BASED BSOD */
-  #bsod-layer {
-    background-color: #0078d7; 
-    z-index: 9999; 
-    cursor: none; 
-    padding: 10% 15%; /* Authentic spacing */
-    margin: 0; 
-    width: 100%; 
-    height: 100%;
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: none; /* Hidden by default */
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-}
-
-.sad-face { font-size: 120px; margin-bottom: 30px; }
-.bsod-title { font-size: 28px; margin-bottom: 30px; line-height: 1.4; }
-.bsod-percent { font-size: 24px; margin-bottom: 30px; }
-.bsod-details { display: flex; align-items: center; gap: 20px; font-size: 14px; }
-.qr-code { background: white; padding: 4px; width: 100px; height: 100px; }
-.stop-code { line-height: 1.6; }
-
-/* The "Lifeless" message animation */
-.lifeless-msg {
-    font-size: 5rem;
-    color: #000;
-    font-weight: bold;
-    text-transform: uppercase;
-    animation: flash 0.2s infinite;
-    display: none; /* Hidden until 100% */
-    margin-top: 20px;
-}
+      /* The "Lifeless" message animation */
+      .lifeless-msg {
+        font-size: 5rem;
+        color: #000;
+        font-weight: bold;
+        text-transform: uppercase;
+        animation: flash 0.2s infinite;
+        display: none; /* Hidden until 100% */
+        margin-top: 20px;
+      }
 
       /* ADD THIS TO YOUR CSS */
       .delta-fade {
@@ -515,7 +523,7 @@
             id="error-msg"
             style="display: none; font-size: 0.8rem"
           >
-            *ভার্সিটিতে পড়িস, বানান জানিস না?* RESTARTING.
+            *ভার্সিটিতে পড়িস, বানান জানিস (জানেন) না?* RESTARTING.
           </div>
         </div>
 
@@ -668,29 +676,36 @@
             </div>
           </div>
         </div>
-    </div>
+      </div>
 
+      <!-- <div id="bsod-layer" class="app-layer"> -->
     <div id="bsod-layer" class="app-layer">
-    <div id="bsod-content">
+      <div id="bsod-content">
         <div class="sad-face">:(</div>
         <div class="bsod-title">
-            Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.
+          Your PC ran into a problem and needs to restart. We're just collecting
+          some error info, and then we'll restart for you.
         </div>
         <div class="bsod-percent">
-            <span id="bsod-progress">0%</span> complete
+          <span id="bsod-progress">0%</span> complete
         </div>
         <div class="bsod-details">
-            <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.youtube.com/watch?v=dQw4w9WgXcQ" alt="QR">
-            <div class="stop-code">
-                For more information about this issue and possible fixes, visit https://www.windows.com/stopcode<br><br>
-                If you call a support person, give them this info:<br>
-                Stop code: CRITICAL_PROCESS_DIED
-            </div>
+          <img
+            class="qr-code"
+            src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            alt="QR"
+          />
+          <div class="stop-code">
+            For more information about this issue and possible fixes, visit
+            https://www.windows.com/stopcode<br /><br />
+            If you call a support person, give them this info:<br />
+            Stop code: CRITICAL_PROCESS_DIED
+          </div>
         </div>
+      </div>
+
+      <div id="lifeless-text" class="lifeless-msg">LIFELESS</div>
     </div>
-    
-    <div id="lifeless-text" class="lifeless-msg">LIFELESS</div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -761,24 +776,32 @@
 
       function playBSODSound() {
         if (!audioCtx) return;
-        const bufferSize = audioCtx.sampleRate * 2.0;
+
+        // Duration increased to 15 seconds to match the screen
+        const duration = 15;
+        const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(
           1,
           bufferSize,
           audioCtx.sampleRate
         );
         const data = buffer.getChannelData(0);
+
         for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * 0.5;
+          data[i] = (Math.random() * 2 - 1) * 0.5; // White noise
         }
+
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
         const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        // Fade out at the end of 15 seconds
         gain.gain.exponentialRampToValueAtTime(
           0.01,
-          audioCtx.currentTime + 2.0
+          audioCtx.currentTime + duration
         );
+
         noise.connect(gain);
         gain.connect(audioCtx.destination);
         noise.start();
@@ -971,91 +994,91 @@
       }
 
       function triggerBSOD() {
-    playBSODSound(); // Play the static noise
-    
-    // 1. Hide the Game Layers
-    document.getElementById('layer-3').classList.remove('active-layer');
-    document.getElementById('phantom-cursor').style.display = 'none';
-    document.body.classList.remove('inverted-inputs');
-    
-    // 2. Show BSOD Layer
-    const bsodLayer = document.getElementById('bsod-layer');
-    const bsodContent = document.getElementById('bsod-content');
-    const lifelessText = document.getElementById('lifeless-text');
-    const progressSpan = document.getElementById('bsod-progress');
-    
-    bsodLayer.classList.add('active-layer');
-    bsodLayer.style.display = 'flex'; // Ensure flex layout works
-    
-    // Reset BSOD state
-    bsodContent.style.display = 'block';
-    lifelessText.style.display = 'none';
-    progressSpan.innerText = "0%";
+        playBSODSound();
 
-    // 3. Start the Counter (15 seconds = 15000ms)
-    let progress = 0;
-    const duration = 15000; 
-    const intervalTime = 100; // Update every 100ms
-    const increment = 100 / (duration / intervalTime); // Math to reach 100 evenly
+        // 1. Hide the Game Layers
+        document.getElementById("layer-3").classList.remove("active-layer");
+        document.getElementById("phantom-cursor").style.display = "none";
+        document.body.classList.remove("inverted-inputs");
 
-    const timer = setInterval(() => {
-        progress += increment;
-        
-        // Randomize speed slightly for realism (stalling at certain numbers)
-        if (Math.random() > 0.7) progress -= (increment * 0.5); 
-        
-        if (progress >= 100) {
+        // 2. Show BSOD Layer & Get Elements
+        const bsodLayer = document.getElementById("bsod-layer");
+        const bsodContent = document.getElementById("bsod-content");
+        const lifelessText = document.getElementById("lifeless-text");
+        const progressSpan = document.getElementById("bsod-progress");
+
+        bsodLayer.classList.add("active-layer");
+        bsodLayer.style.display = "flex";
+
+        // Reset BSOD state (Visible text, Hidden LIFELESS)
+        bsodContent.style.display = "block";
+        lifelessText.style.display = "none";
+        progressSpan.innerText = "0%";
+
+        // 3. Start the Counter (15 seconds)
+        let progress = 0;
+        const duration = 15000;
+        const intervalTime = 100; // Update every 100ms
+        const increment = 100 / (duration / intervalTime);
+
+        const timer = setInterval(() => {
+          progress += increment;
+
+          // Randomize speed slightly for realism (stalls occasionally)
+          if (Math.random() > 0.7) progress -= increment * 0.5;
+
+          if (progress >= 100) {
             progress = 100;
             clearInterval(timer);
-            
+
             // 4. HIT 100% - SHOW "LIFELESS"
             progressSpan.innerText = "100%";
             setTimeout(() => {
-                bsodContent.style.display = 'none'; // Hide standard BSOD text
-                lifelessText.style.display = 'block'; // Show LIFELESS
-                playErrorSound(); // Play loud buzzer
-                
-                // 5. WAIT 3 SECONDS & GO TO PHASE 1
-                setTimeout(() => {
-                    fullResetAndRestart();
-                }, 3000);
+              bsodContent.style.display = "none"; // Hide details
+              lifelessText.style.display = "block"; // Show BIG TEXT
+              playErrorSound(); // Play loud buzzer
+
+              // 5. WAIT 3 SECONDS & RELOAD
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
             }, 1000);
-        }
-        
-        progressSpan.innerText = Math.floor(progress) + "%";
-    }, intervalTime);
-}
+          }
 
-// Helper function to reset the entire game state
-function fullResetAndRestart() {
-    // Hide BSOD
-    const bsodLayer = document.getElementById('bsod-layer');
-    bsodLayer.classList.remove('active-layer');
-    bsodLayer.style.display = 'none';
+          progressSpan.innerText = Math.floor(progress) + "%";
+        }, intervalTime);
+      }
 
-    // Reset Game Variables
-    phase = 0; 
-    buffer = 0; 
-    finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" }; 
-    batteryLevel = 100; 
-    isProcessing = false;
+      // Helper function to reset the entire game state
+      function fullResetAndRestart() {
+        // Hide BSOD
+        const bsodLayer = document.getElementById("bsod-layer");
+        bsodLayer.classList.remove("active-layer");
+        bsodLayer.style.display = "none";
 
-    // Reset UI Elements
-    ui.buffer.innerText = "0";
-    ui.status.innerText = "System Ready...";
-    document.getElementById('phone-display').innerText = "100-000-0000";
-    document.getElementById('typing-challenge').value = "";
-    document.getElementById('terms-check').checked = false;
-    
-    // Reset Buttons/Controls
-    document.getElementById('controls-1').style.display = 'flex';
-    document.getElementById('controls-2').style.display = 'flex';
-    document.getElementById('power-section').style.display = 'block';
-    document.getElementById('countdown-panel').style.display = 'none';
-    
-    // Go to Layer 1
-    document.getElementById('layer-1').classList.add('active-layer');
-}
+        // Reset Game Variables
+        phase = 0;
+        buffer = 0;
+        finalValues = { hh: "--", mm: "--", ss: "--", ap: "--" };
+        batteryLevel = 100;
+        isProcessing = false;
+
+        // Reset UI Elements
+        ui.buffer.innerText = "0";
+        ui.status.innerText = "System Ready...";
+        document.getElementById("phone-display").innerText = "100-000-0000";
+        document.getElementById("typing-challenge").value = "";
+        document.getElementById("terms-check").checked = false;
+
+        // Reset Buttons/Controls
+        document.getElementById("controls-1").style.display = "flex";
+        document.getElementById("controls-2").style.display = "flex";
+        document.getElementById("power-section").style.display = "block";
+        document.getElementById("countdown-panel").style.display = "none";
+
+        // Go to Layer 1
+        document.getElementById("layer-1").classList.add("active-layer");
+      }
 
       function requestInteger() {
         if (isProcessing) return;
@@ -1295,7 +1318,7 @@ function fullResetAndRestart() {
         playErrorSound();
         Swal.fire({
           icon: "warning",
-          title: "INVERTED",
+          title: "শুভকামনা...",
           showConfirmButton: false,
           timer: 1000,
         });
@@ -1311,28 +1334,32 @@ function fullResetAndRestart() {
         }px, ${window.innerHeight - e.clientY}px)`;
       });
 
-
       // === REAL-TIME ANALOG CLOCK ===
-    function startAnalogClock() {
-    setInterval(() => {
-        const now = new Date();
-        const seconds = now.getSeconds();
-        const minutes = now.getMinutes();
-        const hours = now.getHours();
+      function startAnalogClock() {
+        setInterval(() => {
+          const now = new Date();
+          const seconds = now.getSeconds();
+          const minutes = now.getMinutes();
+          const hours = now.getHours();
 
-        const secDeg = ((seconds / 60) * 360);
-        const minDeg = ((minutes / 60) * 360) + ((seconds/60)*6);
-        const hourDeg = ((hours / 12) * 360) + ((minutes/60)*30);
+          const secDeg = (seconds / 60) * 360;
+          const minDeg = (minutes / 60) * 360 + (seconds / 60) * 6;
+          const hourDeg = (hours / 12) * 360 + (minutes / 60) * 30;
 
-        document.getElementById('clock-sec').style.transform = `rotate(${secDeg}deg)`;
-        document.getElementById('clock-min').style.transform = `rotate(${minDeg}deg)`;
-        document.getElementById('clock-hour').style.transform = `rotate(${hourDeg}deg)`;
-    }, 1000);
-}
+          document.getElementById(
+            "clock-sec"
+          ).style.transform = `rotate(${secDeg}deg)`;
+          document.getElementById(
+            "clock-min"
+          ).style.transform = `rotate(${minDeg}deg)`;
+          document.getElementById(
+            "clock-hour"
+          ).style.transform = `rotate(${hourDeg}deg)`;
+        }, 1000);
+      }
 
-// CALL THIS TO START
-startAnalogClock();
-
+      // CALL THIS TO START
+      startAnalogClock();
 
       updateDisplay();
     </script>
