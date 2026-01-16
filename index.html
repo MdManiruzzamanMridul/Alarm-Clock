@@ -344,61 +344,36 @@
         transform: translateY(-10px);
       }
 
-      /* FOOTER & CLOCK */
+      /* FOOTER & DIGITAL CLOCK */
       .footer-row {
         display: flex;
         height: 100px;
         width: 100%;
       }
-      .clock-container {
+
+      .footer-clock-container {
         width: 50%;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         background: #000;
         border-top: 2px solid #444;
+        color: #00ff41;
+        font-family: "Courier New", Courier, monospace;
       }
-      .analog-clock {
-        width: 80px;
-        height: 80px;
-        border: 4px solid #00ff41;
-        border-radius: 50%;
-        position: relative;
-        box-shadow: 0 0 10px #00ff41, inset 0 0 10px #00ff41;
+      .footer-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
-      .hand {
-        position: absolute;
-        bottom: 50%;
-        left: 50%;
-        transform-origin: bottom;
-        background: #00ff41;
-        border-radius: 2px;
-      }
-      .hour-hand {
-        width: 4px;
-        height: 25px;
-        margin-left: -2px;
-      }
-      .min-hand {
-        width: 2px;
-        height: 35px;
-        margin-left: -1px;
-      }
-      .sec-hand {
-        width: 1px;
-        height: 38px;
-        margin-left: -0.5px;
-        background: red;
-      }
-      .center-dot {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 8px;
-        height: 8px;
-        background: #00ff41;
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
+      .footer-time {
+        font-size: 1.8rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
       }
 
       /* MOBILE */
@@ -430,6 +405,9 @@
         }
         .btn-runaway {
           position: static !important;
+        }
+        .footer-time {
+          font-size: 1.2rem;
         }
       }
     </style>
@@ -611,13 +589,10 @@
             src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWZhbzlxaHg3Zml5Z2RtYjRzejJhMmc3aW8wamR0aGNhMjV2ZTAxaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zz9YbblScCLxRi9PBj/giphy.gif"
             alt="System Activity"
           />
-          <div class="clock-container">
-            <div class="analog-clock">
-              <div class="hand hour-hand" id="clock-hour"></div>
-              <div class="hand min-hand" id="clock-min"></div>
-              <div class="hand sec-hand" id="clock-sec"></div>
-              <div class="center-dot"></div>
-            </div>
+
+          <div class="footer-clock-container">
+            <div class="footer-label">এখন সময়</div>
+            <div id="footer-digital-time" class="footer-time">--:--:-- --</div>
           </div>
         </div>
       </div>
@@ -1143,27 +1118,25 @@
         }px, ${window.innerHeight - e.clientY}px)`;
       });
 
-      function startAnalogClock() {
+      // === FOOTER DIGITAL CLOCK LOGIC ===
+      function startFooterClock() {
         setInterval(() => {
           const now = new Date();
-          const seconds = now.getSeconds();
-          const minutes = now.getMinutes();
-          const hours = now.getHours();
-          const secDeg = (seconds / 60) * 360;
-          const minDeg = (minutes / 60) * 360 + (seconds / 60) * 6;
-          const hourDeg = (hours / 12) * 360 + (minutes / 60) * 30;
-          document.getElementById(
-            "clock-sec"
-          ).style.transform = `rotate(${secDeg}deg)`;
-          document.getElementById(
-            "clock-min"
-          ).style.transform = `rotate(${minDeg}deg)`;
-          document.getElementById(
-            "clock-hour"
-          ).style.transform = `rotate(${hourDeg}deg)`;
+          let hours = now.getHours();
+          const minutes = now.getMinutes().toString().padStart(2, "0");
+          const seconds = now.getSeconds().toString().padStart(2, "0");
+          const ampm = hours >= 12 ? "PM" : "AM";
+
+          hours = hours % 12;
+          hours = hours ? hours : 12; // hour '0' should be '12'
+
+          const timeString = `${hours
+            .toString()
+            .padStart(2, "0")}:${minutes}:${seconds} ${ampm}`;
+          document.getElementById("footer-digital-time").innerText = timeString;
         }, 1000);
       }
-      startAnalogClock();
+      startFooterClock();
       updateDisplay();
     </script>
   </body>
