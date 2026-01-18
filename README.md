@@ -1,7 +1,7 @@
 # Alarm Clock
 # ⏰ Mora Idur More Jabe (WorstUI competition)
 
-A web-based interactive prank application designed to troll your friends. It simulates a futuristic alarm clock system that eventually leads to chaos, a fake system crash (BSOD), and a loud, flashing alarm that is difficult to turn off.
+A web-based interactive prank application designed to troll friends. It simulates a futuristic alarm clock system that eventually leads to chaos (or death maybe) and a loud, flashing alarm that is difficult to turn off.
 
 ### 🔗 [Live Demo](https://mdmaniruzzamanmridul.github.io/Alarm-Clock/)
 
