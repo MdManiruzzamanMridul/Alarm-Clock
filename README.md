@@ -7,8 +7,8 @@ A web-based interactive prank application designed to troll friends. It simulate
 
 ## 🌟 Features
 
-* **Phase 1: Boot Sequence:** A fake "System Boot" screen with a GIF animation.
-* **Phase 2: The Pledge:** Users must type a specific "Irony Pledge" and agree to "Soul Binding" terms to proceed.
+* **Phase 1: Starter:** A fake "System Boot" screen.
+* **Phase 2: The Trap:** Users must type a specific "Life Pledge" and agree to "Soul Binding" terms to proceed.
     * *Anti-Cheat:* If they make a spelling mistake, the input shakes and resets.
 * **Phase 3: The Trap:**
     * **Fake Battery:** A draining battery bar that users must "Crank" to keep alive.
